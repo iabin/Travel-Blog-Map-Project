@@ -1,0 +1,22 @@
+#map {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.custom-hr {
+  margin-top: 5px; /* Adjust as necessary */
+  margin-bottom: 5px; /* Adjust as necessary */
+}
+
+.carousel-img {
+  max-height: 300px;
+}
