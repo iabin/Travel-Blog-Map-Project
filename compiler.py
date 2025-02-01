@@ -5,29 +5,35 @@ import time
 import shutil
 
 # ... (rest of your imports)
-root_dir = "travel_raw_data"
-to_generate = "website/generated"
+root_dir = "raw_data"
+to_generate = "website/generated_data"
 
-def validate_directory_structure(root_dir):
-    for root, dirs, files in os.walk(root_dir):
-        path_parts = os.path.relpath(root, root_dir).split(os.sep)
-        
-        # Check for the structure: $country/$city/$date
-        if len(path_parts) == 3:
-            country, city, date = path_parts
-            if "images" in dirs:
-                if len([f for f in os.listdir(os.path.join(root, "images")) if f.endswith(('.png', '.jpg'))]) == 0:
-                    raise Exception(f"No images found in the images directory: {os.path.join(root, 'images')}")
-                
-        elif len(path_parts) == 2:
-            # Check if at least one date folder exists in the city folder
-            if not any(os.path.isdir(os.path.join(root, d)) for d in dirs):
-                raise Exception(f"No date folders found in city directory: {root}")
+file_path = os.path.join(root_dir, "points_places_template.json")
 
-        elif len(path_parts) == 1:
-            # Check if at least one city folder exists in the country folder
-            if not any(os.path.isdir(os.path.join(root, d)) for d in dirs):
-                raise Exception(f"No city folders found in country directory: {root}")
+def load_json_file(file_path):
+
+    """
+    Loads and parses a JSON file.
+
+    Args:
+        file_path (str): Path to the JSON file to load
+
+    Returns:
+        dict/list: Parsed JSON data
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist
+        json.JSONDecodeError: If the file contains invalid JSON
+    """
+    try:
+        with open(file_path, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Could not find JSON file: {file_path}")
+    except json.JSONDecodeError as e:
+        raise json.JSONDecodeError(f"Invalid JSON in file {file_path}: {str(e)}", e.doc, e.pos)
+
+
 
 
 def add_latitude_longitude(places_list):
@@ -40,100 +46,39 @@ def add_latitude_longitude(places_list):
             place['latitude'] = location.latitude
             place['longitude'] = location.longitude
 
-def get_directory_structure(root_dir):
-    # Dictionary to hold the data
-    places_dict = {}
-
-    # Iterate through the root directory and subdirectories
-    for root, dirs, files in os.walk(root_dir):
-        # Get the relative path components
-        no_root_dir = os.path.relpath(root, root_dir)
-        new_root = os.path.join("generated", no_root_dir)
-        path_parts = no_root_dir.split(os.sep)
-
-        if len(path_parts) >= 3:
-            country, city, date = path_parts[:3]
-
-            # Get or create the dictionary for this country
-            country_data = places_dict.setdefault(country, {})
+def add_images_from_directory(places_list):
+    """
+    Adds an 'images' list attribute to each place containing paths to all images in its images_directory.
+    
+    Args:
+        places_list (list): List of place dictionaries containing images_directory paths
+        
+    Returns:
+        None - Modifies the places_list in place
+    """
+    for place in places_list:
+        images = []
+        if 'images_directory' in place:
+            image_dir = os.path.join(root_dir, place['images_directory'])
             
-            # Get or create the dictionary for this city in this country
-            city_data = country_data.setdefault(city, {})
-            
-            # Get or create the dictionary for this date in this city in this country
-            visit_data = city_data.setdefault(date, {})
+            if os.path.exists(image_dir):
+                # Walk through directory and find all image files
+                for root, _, files in os.walk(image_dir):
+                    for file in files:
+                        if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                            # Convert path to be relative to website/generated directory
+                            rel_path = os.path.relpath(root, root_dir)
+                            image_path = os.path.join('generated', rel_path, file)
+                            images.append(image_path)
+                            
+        place['images'] = images
 
-            if len(path_parts) == 4:
-                blog_title = path_parts[3]
-                index_mds = [os.path.join(new_root, file) for file in files if file.endswith(('md', 'html'))]
-                
-                index_name = None
+json_loaded = load_json_file(file_path)
 
-                if len(index_mds) > 1:
-                    raise ValueError(f"More than one index.md file found in {new_root}")
-                if len(index_mds) > 0:
-                    index_name = index_mds[0]
+add_latitude_longitude(json_loaded)
+add_images_from_directory(json_loaded)
 
-                # Add the blog entry to the data structure
-                blog_data = {
-                    'title': blog_title.replace('-', ' '),
-                    'filePath': index_name
-                }
-                # Assign the blog data to the correct key in the dictionary
-                visit_data[blog_title] = blog_data
-            if len(path_parts) == 5:
-                # Assign the blog data to the correct key in the dictionary
-                visit_data[blog_title]['imagesPath'] = [os.path.join(new_root, file) for file in files if file.endswith(('.png', '.jpg'))]
-            if len(path_parts) > 5:
-                raise ValueError(f"Directory structure not supported: {path_parts}")
-            
-    # Convert the data to JSON
-    return places_dict
-
-
-def transform_to_place_structure(places_dict):
-    places_list = []
-    for country, cities in places_dict.items():
-        for city, city_data in cities.items():
-
-            visits = []
-            for date, blogs in city_data.items():
-                visit_blogs = []
-                for blogName, blogInfo in blogs.items():
-                    visit_blogs.append({
-                        "title": blogInfo['title'],
-                        "filePath": blogInfo['filePath'],
-                        "imagesPath": blogInfo['imagesPath']
-                    })
-                visits.append({
-                    "visitDate": date,
-                    "blogs": visit_blogs
-                })
-
-            place = {
-                "country": country,
-                "city": city,
-                "visits": visits,
-             }
-            places_list.append(place)
-
-    return places_list
-
-
-validate_directory_structure(root_dir)
-
-places_json = get_directory_structure(root_dir)
-
-
-places_list = transform_to_place_structure(places_json)
-add_latitude_longitude(places_list)
-
-places_json = json.dumps(places_list, indent=4)
-
-
-shutil.rmtree(to_generate)
-shutil.copytree(root_dir,  to_generate)
 with open(to_generate+"/points_places.json", 'w') as file:
-    file.write(places_json)
+    json.dump(json_loaded, file, indent=4)
 
-print(places_json)
+print(json_loaded)

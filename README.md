@@ -1,75 +1,136 @@
 # Travel Blog Map Project
-
+[see the website](https://iabin.github.io/Travel-Blog-Map-Project/website/)
 ## Project Overview
 
-This project is designed to help visualize travel blogs on a map interface. It consists of a data processing script (`compiler.py`) and a web interface to display the processed data on a map.
 
-The `compiler.py` script processes a directory of travel blogs organized by country, city, and date, and converts this data into a JSON format that can be displayed on the website. The website then uses this data to display markers on a map, with popups that provide details about each blog post, including links to the posts and images.
+The **Travel Blog Map Project** is an interactive map visualization tool that showcases various travel locations. Utilizing a JSON data file containing detailed location information, the project automatically generates latitude and longitude coordinates, as well as image paths for each destination. The map displays markers for every location, each equipped with popups that reveal visit dates and photo galleries, providing an engaging way to explore travel experiences.
 
 ## Directory Structure
-The script expects a directory structure as below:
 
-```
-travel_raw_data/
-├── [Country Name]/
-│   ├── [City Name]/
-│   │   ├── [YYYY-MM]/
-│   │   │   ├── [Blog Title]/
-│   │   │   │   ├── index.md or index.html (optional but no more than one)
-│   │   │   │   └── images/ (optional)
-│   │   │   │       ├── image1.jpg
-│   │   │   │       ├── image2.jpg
-│   │   │   │       └── ...
-└── ...
-```
 
-### Description:
-- `[Country Name]`: Directory name representing the name of the country.
-- `[City Name]`: Directory name representing the name of the city.
-- `[YYYY-MM]`: Directory representing the date of the visit in `YYYY-MM` format.
-- `[Blog Title]`: Directory name representing the title of the blog.
-- `index.md` or `index.html`: (Optional) A file containing the blog content for that particular visit. Only one of these should be present in a blog title directory.
-- `images/`: (Optional) Directory holding images relevant to the blog post.
+raw_data/
+└── points_places_template.json # Template JSON with basic location data
+website/
+├── generated_data/
+│ └── points_places.json # Auto-generated JSON with coordinates and images
+├── js/
+│ ├── main.js # Map initialization and data handling
+│ ├── Place.js # Place class definition
+│ └── popupContent.js # Popup content generation
+├── css/
+│ └── styles.css # Custom styles
+├── libs/
+│ ├── css/
+│ │ ├── bootstrap.min.css # Bootstrap CSS
+│ │ └── leaflet.css # Leaflet CSS
+│ ├── js/
+│ │ ├── bootstrap.min.js # Bootstrap JS
+│ │ └── leaflet.js # Leaflet JS
+│ └── css/
+│ └── bootstrap.min.css.map # Source map for Bootstrap CSS
+├── index.html # Main HTML file
+└── .cursorignore # Files and directories to ignore during indexing
 
-## Script Workflow
-1. **Directory Structure Validation**: The script initially validates the directory structure ensuring that necessary folders are present and correctly structured.
-2. **Data Retrieval**: The script then walks through the directory structure, extracting necessary information and organizing it into a dictionary.
-3. **Latitude and Longitude Fetching**: Utilizes the geopy library to fetch latitude and longitude information for each city based on the city and country name.
-4. **JSON File Generation**: The structured data is then converted to a JSON file.
-5. **Directory Copying**: The original directory (`travel_raw_data`) is copied to a new location (`website/generated`) and the generated JSON file is saved in the new directory.
 
-## How to Execute the Script
 
-1. Ensure you have Python installed on your system.
-2. Install necessary Python packages:
-   ```
-   pip install geopy
-   ```
-3. Place your raw data in a folder named `travel_raw_data` at the same level as the `compiler.py` script.
-4. Run the `compiler.py` script:
-   ```
-   python compiler.py
-   ```
-5. The script will process the data, adding geolocation information and converting it into a format suitable for the website. The processed data will be saved as `points_places.json` in the `website/generated` directory.
+This script performs the following actions:
 
-## How to View the Website
+1. **Loads** the template JSON data from `raw_data/points_places_template.json`.
+2. **Adds** latitude and longitude coordinates using the Geopy library.
+3. **Compiles** a list of image paths from the specified directories.
+4. **Generates** the final JSON file at `website/generated_data/points_places.json`.
 
-After executing the script:
+### Launch the Website
 
-1. Navigate to the `website/generated` directory.
-2. Open the `index.html` file in a web browser to view the website.
-3. You will see markers on the map representing different blog posts. Clicking on a marker will display a popup with details about the blog post, including links to the post and images.
+After generating the JSON data, you can view the interactive map by opening the `index.html` file in your web browser.
 
-## Additional Information
+#### Option 1: Open Directly
 
-- The website utilizes the Leaflet library for mapping functionalities and Bootstrap for styling.
-- The `main.js` script handles the logic for displaying data on the map and other UI interactions.
-- The `Place.js` script defines classes that structure the data for places, visits, and blogs, and contains methods to aggregate data from visits and blogs into `Place` objects.
-- The `popupContent.js` script defines the structure/content of the popups that appear on the map when a place marker is clicked.
+Navigate to the `website` directory and open `index.html` with your preferred web browser.
 
-## Troubleshooting
-If any issues occur during execution, the script will raise exceptions with descriptive error messages to help identify and rectify the problem.
+
+#### Option 2: Serve with a Local Web Server
+
+For a better experience, especially when dealing with JavaScript modules, it's recommended to serve the website using a local web server.
+
+**Using Python's SimpleHTTPServer:**
+
+
+**Fields:**
+
+- **country** (`string`): The name of the country.
+- **city** (`string`): The name of the city or specific location.
+- **visitDates** (`array of strings`): A list of dates when the location was visited.
+- **latitude** (`number`): The latitude coordinate of the location.
+- **longitude** (`number`): The longitude coordinate of the location.
+- **images** (`array of strings`): A list of relative paths to images associated with the location. These paths are used to display image galleries in the map popups.
+
+## JSON Fields Explained
+
+### `country`
+
+- **Type:** `string`
+- **Description:** Specifies the country where the location is found.
+- **Example:** `"Mexico"`
+
+### `city`
+
+- **Type:** `string`
+- **Description:** Specifies the city or specific location name.
+- **Example:** `"Cancun"`
+
+### `visitDates`
+
+- **Type:** `array of strings`
+- **Description:** Contains the dates when the location was visited. Dates can be formatted as year (`"2021"`) or year-month (`"2021-02"`).
+- **Example:** `["2021", "2022-05"]`
+
+### `latitude`
+
+- **Type:** `number`
+- **Description:** Represents the geographical latitude of the location.
+- **Example:** `21.1527467`
+
+### `longitude`
+
+- **Type:** `number`
+- **Description:** Represents the geographical longitude of the location.
+- **Example:** `-86.8425761`
+
+### `images_directory`
+
+- **Type:** `string`
+- **Description:** Specifies the relative path to the directory containing images for the location. This field is used by the `compiler.py` script to gather all image file paths.
+- **Example:** `"images/mexico/cancun"`
+
+### `images`
+
+- **Type:** `array of strings`
+- **Description:** Contains relative paths to image files associated with the location. These images are displayed in a carousel within the map popups.
+- **Example:**
+  ```json
+  [
+      "generated/mexico/cancun/2021-02/cancun-beach/images/image1.jpg",
+      "generated/mexico/cancun/2021-02/cancun-night/images/image2.jpg"
+  ]
+  ```
+
+## Usage
+
+1. **Add a New Location:**
+   - Update the `raw_data/points_places_template.json` file with the new location details.
+   - Specify the `country`, `city`, `visitDates`, and `images_directory` (if any).
+
+2. **Generate Updated JSON:**
+   - Run the `compiler.py` script to process the template and generate the updated `points_places.json` with coordinates and image paths.
+
+3. **View the Map:**
+   - Open the `index.html` file in a web browser or serve it via a local web server to see the updated map with the new location marker.
 
 ## Contributing
-Feel free to contribute to this project through pull requests or by reporting issues.
 
+Contributions are welcome! Please fork the repository and submit a pull request with your enhancements.
+
+## License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).

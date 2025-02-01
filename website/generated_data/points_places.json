@@ -1,0 +1,628 @@
+[
+    {
+        "country": "USA",
+        "city": "Honolulu",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 21.2920698,
+        "longitude": -157.846227,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Pearl Harbor",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 21.329744,
+        "longitude": -157.9673607,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "San Francisco",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 37.8097487,
+        "longitude": -122.4104493,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Menlo Park",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": 37.4788966,
+        "longitude": -122.14616703785018,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Los Angeles",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": 34.1943707,
+        "longitude": -118.46591270239938,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Anaheim",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Hermosillo",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 29.0948207,
+        "longitude": -110.9692202,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "San Carlos",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 24.4984051,
+        "longitude": -99.0077279695821,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "San Nicolas",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 25.7558021,
+        "longitude": -100.289648,
+        "images": []
+    },
+    {
+        "country": "Canada",
+        "city": "Toronto",
+        "visitDates": [
+            "2023"
+        ],
+        "images_directory": "",
+        "latitude": 43.6534817,
+        "longitude": -79.3839347,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Washington",
+        "visitDates": [
+            "2018"
+        ],
+        "images_directory": "",
+        "latitude": 45.558317450000004,
+        "longitude": -122.92184390929691,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Philadelphia",
+        "visitDates": [
+            "2018"
+        ],
+        "images_directory": "",
+        "latitude": 39.92509855,
+        "longitude": -75.16906565374723,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "New York",
+        "visitDates": [
+            "2018"
+        ],
+        "images_directory": "",
+        "latitude": 43.06922635,
+        "longitude": -76.17248945485272,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Boston",
+        "visitDates": [
+            "2018"
+        ],
+        "images_directory": "",
+        "latitude": 41.2295311,
+        "longitude": -73.067025,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Orlando",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 28.54117705,
+        "longitude": -81.2768845,
+        "images": []
+    },
+    {
+        "country": "Cuba",
+        "city": "Vinales",
+        "visitDates": [
+            "2020"
+        ],
+        "images_directory": "",
+        "latitude": 22.616537,
+        "longitude": -83.709023,
+        "images": []
+    },
+    {
+        "country": "Cuba",
+        "city": "Havana",
+        "visitDates": [
+            "2020"
+        ],
+        "images_directory": "",
+        "latitude": 23.135305,
+        "longitude": -82.3589631,
+        "images": []
+    },
+    {
+        "country": "Cuba",
+        "city": "Matanzas",
+        "visitDates": [
+            "2020"
+        ],
+        "images_directory": "",
+        "latitude": 23.0469236,
+        "longitude": -81.5783032,
+        "images": []
+    },
+    {
+        "country": "Cuba",
+        "city": "Varadero",
+        "visitDates": [
+            "2020"
+        ],
+        "images_directory": "",
+        "latitude": 23.149578,
+        "longitude": -81.260025,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Cozumel",
+        "visitDates": [
+            "2021"
+        ],
+        "images_directory": "",
+        "latitude": 20.4320599,
+        "longitude": -86.92069058377268,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Playa del Carmen",
+        "visitDates": [
+            "2021"
+        ],
+        "images_directory": "",
+        "latitude": 20.6308643,
+        "longitude": -87.0779503,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Puerto Morelos",
+        "visitDates": [
+            "2021"
+        ],
+        "images_directory": "",
+        "latitude": 20.8502681,
+        "longitude": -86.8750229,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Cancun",
+        "visitDates": [
+            "2021"
+        ],
+        "images_directory": "",
+        "latitude": 21.1527467,
+        "longitude": -86.8425761,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Los Cabos",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": 23.271848050000003,
+        "longitude": -109.6897684130629,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Manzanillo",
+        "visitDates": [
+            "2016"
+        ],
+        "images_directory": "",
+        "latitude": 19.0506256,
+        "longitude": -104.3159957,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Mazamitla",
+        "visitDates": [
+            "2020"
+        ],
+        "images_directory": "",
+        "latitude": 19.890584150000002,
+        "longitude": -103.08102044422532,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Chapala",
+        "visitDates": [
+            "2020"
+        ],
+        "images_directory": "",
+        "latitude": 20.2277575,
+        "longitude": -103.07128271474693,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Ajijic",
+        "visitDates": [
+            "2020"
+        ],
+        "images_directory": "",
+        "latitude": 20.3001977,
+        "longitude": -103.261934,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Guadalajara",
+        "visitDates": [
+            "2020"
+        ],
+        "images_directory": "",
+        "latitude": 20.6720375,
+        "longitude": -103.338396,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Guanajuato",
+        "visitDates": [
+            "2018"
+        ],
+        "images_directory": "",
+        "latitude": 20.9876996,
+        "longitude": -101.0,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Ixtapa Zihuatanejo",
+        "visitDates": [
+            "2018"
+        ],
+        "images_directory": "",
+        "latitude": 17.6036076,
+        "longitude": -101.46199568977451,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Acapulco",
+        "visitDates": [
+            "2018",
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 16.8680495,
+        "longitude": -99.8940182,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Puerto Escondido",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 15.8693331,
+        "longitude": -97.0726428,
+        "images": []
+    },
+    {
+        "country": "Guatemala",
+        "city": "Panajachel",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 14.7421699,
+        "longitude": -91.1559757,
+        "images": []
+    },
+    {
+        "country": "Guatemala",
+        "city": "San Juan La Laguna",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 14.6709938,
+        "longitude": -91.30513948058689,
+        "images": []
+    },
+    {
+        "country": "Guatemala",
+        "city": "Santa Cruz La Laguna",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 14.74530335,
+        "longitude": -91.21899232573156,
+        "images": []
+    },
+    {
+        "country": "Guatemala",
+        "city": "Antigua",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 14.5567814,
+        "longitude": -90.7337346,
+        "images": []
+    },
+    {
+        "country": "Guatemala",
+        "city": "Guatemala City",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 14.6416142,
+        "longitude": -90.5132836,
+        "images": []
+    },
+    {
+        "country": "Ecuador",
+        "city": "Puerto Ayora",
+        "visitDates": [
+            "2023"
+        ],
+        "images_directory": "",
+        "latitude": -0.7471674,
+        "longitude": -90.3134198,
+        "images": []
+    },
+    {
+        "country": "Ecuador",
+        "city": "Seymour Island",
+        "visitDates": [
+            "2023"
+        ],
+        "images_directory": "",
+        "latitude": -0.47172780000000003,
+        "longitude": -90.2875566802131,
+        "images": []
+    },
+    {
+        "country": "Colombia",
+        "city": "Bogota",
+        "visitDates": [
+            "2023"
+        ],
+        "images_directory": "",
+        "latitude": 4.6533816,
+        "longitude": -74.0836333,
+        "images": []
+    },
+    {
+        "country": "Peru",
+        "city": "Lima",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -12.0621065,
+        "longitude": -77.0365256,
+        "images": []
+    },
+    {
+        "country": "Peru",
+        "city": "Cusco",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -12.5,
+        "longitude": -72.5,
+        "images": []
+    },
+    {
+        "country": "Chile",
+        "city": "Santiago",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -33.4377756,
+        "longitude": -70.6504502,
+        "images": []
+    },
+    {
+        "country": "Argentina",
+        "city": "Bariloche",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -41.1334781,
+        "longitude": -71.3101474,
+        "images": []
+    },
+    {
+        "country": "Argentina",
+        "city": "Buenos Aires",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -34.6083696,
+        "longitude": -58.4440583,
+        "images": []
+    },
+    {
+        "country": "Uruguay",
+        "city": "Montevideo",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -34.9058916,
+        "longitude": -56.1913095,
+        "images": []
+    },
+    {
+        "country": "Brazil",
+        "city": "Foz do Iguazu",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -25.693905,
+        "longitude": -54.4365376,
+        "images": []
+    },
+    {
+        "country": "Argentina",
+        "city": "Puerto Iguazu",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -25.6347035,
+        "longitude": -54.58282845801685,
+        "images": []
+    },
+    {
+        "country": "Paraguay",
+        "city": "Ciudad del Este",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -25.5169015,
+        "longitude": -54.6168645,
+        "images": []
+    },
+    {
+        "country": "Brazil",
+        "city": "Sao Paulo",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -23.5506507,
+        "longitude": -46.6333824,
+        "images": []
+    },
+    {
+        "country": "Brazil",
+        "city": "Rio de Janeiro",
+        "visitDates": [
+            "2022"
+        ],
+        "images_directory": "",
+        "latitude": -22.9110137,
+        "longitude": -43.2093727,
+        "images": []
+    },
+    {
+        "country": "France",
+        "city": "Paris",
+        "visitDates": [
+            "2023"
+        ],
+        "images_directory": "",
+        "latitude": 48.8588897,
+        "longitude": 2.3200410217200766,
+        "images": []
+    },
+    {
+        "country": "Netherlands",
+        "city": "Amsterdam",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": 52.3730796,
+        "longitude": 4.8924534,
+        "images": []
+    },
+    {
+        "country": "Italy",
+        "city": "Rome",
+        "visitDates": [
+            "2023"
+        ],
+        "images_directory": "",
+        "latitude": 41.8933203,
+        "longitude": 12.4829321,
+        "images": []
+    },
+    {
+        "country": "Tanzania",
+        "city": "Kilimanjaro",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": -3.0786534000000003,
+        "longitude": 37.41985556750418,
+        "images": []
+    },
+    {
+        "country": "Tanzania",
+        "city": "Serengeti",
+        "visitDates": [
+            "2024"
+        ],
+        "images_directory": "",
+        "latitude": -2.3712909499999997,
+        "longitude": 34.69838278510568,
+        "images": []
+    }
+]
