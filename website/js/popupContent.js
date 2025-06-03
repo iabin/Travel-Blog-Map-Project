@@ -60,7 +60,6 @@ export function createPopupContent(place) {
           </div>
           
         </div>
-        </div>
     `;
 
     return popupContent;
