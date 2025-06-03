@@ -31,7 +31,7 @@ window.onload = function () {
             console.log(list_of_places);
 
             list_of_places.forEach(place => {
-                if (!place.latitude || !place.longitude) {
+                if (place.latitude == null || place.longitude == null) {
                     console.error(`Missing coordinates for ${place.city}, ${place.country}`);
                     return;
                 }
