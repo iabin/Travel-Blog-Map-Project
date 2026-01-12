@@ -50,8 +50,8 @@
             "2022"
         ],
         "images_directory": "",
-        "latitude": 34.1943707,
-        "longitude": -118.46591270239938,
+        "latitude": 4.72910725,
+        "longitude": -74.02608652723137,
         "images": []
     },
     {
@@ -61,6 +61,8 @@
             "2022"
         ],
         "images_directory": "",
+        "latitude": 33.78305195,
+        "longitude": -118.21107564020357,
         "images": []
     },
     {
@@ -114,8 +116,8 @@
             "2018"
         ],
         "images_directory": "",
-        "latitude": 45.558317450000004,
-        "longitude": -122.92184390929691,
+        "latitude": 47.580138,
+        "longitude": -122.3273036,
         "images": []
     },
     {
@@ -125,8 +127,8 @@
             "2018"
         ],
         "images_directory": "",
-        "latitude": 39.92509855,
-        "longitude": -75.16906565374723,
+        "latitude": 39.97765425,
+        "longitude": -75.17396155,
         "images": []
     },
     {
@@ -136,8 +138,8 @@
             "2018"
         ],
         "images_directory": "",
-        "latitude": 43.06922635,
-        "longitude": -76.17248945485272,
+        "latitude": 43.069217,
+        "longitude": -76.17250644183399,
         "images": []
     },
     {
@@ -147,8 +149,8 @@
             "2018"
         ],
         "images_directory": "",
-        "latitude": 41.2295311,
-        "longitude": -73.067025,
+        "latitude": 41.2538533,
+        "longitude": -73.0163371,
         "images": []
     },
     {
@@ -158,8 +160,8 @@
             "2024"
         ],
         "images_directory": "",
-        "latitude": 28.54117705,
-        "longitude": -81.2768845,
+        "latitude": 28.5143458,
+        "longitude": -81.4610293,
         "images": []
     },
     {
@@ -221,11 +223,12 @@
         "country": "Mexico",
         "city": "Playa del Carmen",
         "visitDates": [
-            "2021"
+            "2021",
+            "2025"
         ],
         "images_directory": "",
-        "latitude": 20.6308643,
-        "longitude": -87.0779503,
+        "latitude": 20.6461095,
+        "longitude": -87.0809021,
         "images": []
     },
     {
@@ -235,15 +238,16 @@
             "2021"
         ],
         "images_directory": "",
-        "latitude": 20.8502681,
-        "longitude": -86.8750229,
+        "latitude": 20.931763349999997,
+        "longitude": -87.20118055024015,
         "images": []
     },
     {
         "country": "Mexico",
         "city": "Cancun",
         "visitDates": [
-            "2021"
+            "2021",
+            "2025"
         ],
         "images_directory": "",
         "latitude": 21.1527467,
@@ -357,8 +361,8 @@
             "2024"
         ],
         "images_directory": "",
-        "latitude": 15.8693331,
-        "longitude": -97.0726428,
+        "latitude": 15.8763132,
+        "longitude": -97.08861537300587,
         "images": []
     },
     {
@@ -445,8 +449,8 @@
             "2023"
         ],
         "images_directory": "",
-        "latitude": 4.6533816,
-        "longitude": -74.0836333,
+        "latitude": 4.6533817,
+        "longitude": -74.0836331,
         "images": []
     },
     {
@@ -456,8 +460,8 @@
             "2022"
         ],
         "images_directory": "",
-        "latitude": -12.0621065,
-        "longitude": -77.0365256,
+        "latitude": -12.0459808,
+        "longitude": -77.0305912,
         "images": []
     },
     {
@@ -500,8 +504,8 @@
             "2022"
         ],
         "images_directory": "",
-        "latitude": -34.6083696,
-        "longitude": -58.4440583,
+        "latitude": -34.6095579,
+        "longitude": -58.3887904,
         "images": []
     },
     {
@@ -533,8 +537,8 @@
             "2022"
         ],
         "images_directory": "",
-        "latitude": -25.6347035,
-        "longitude": -54.58282845801685,
+        "latitude": -25.6107508,
+        "longitude": -54.5764199,
         "images": []
     },
     {
@@ -574,18 +578,20 @@
         "country": "France",
         "city": "Paris",
         "visitDates": [
-            "2023"
+            "2023",
+            "2026"
         ],
         "images_directory": "",
-        "latitude": 48.8588897,
-        "longitude": 2.3200410217200766,
+        "latitude": 48.8534951,
+        "longitude": 2.3483915,
         "images": []
     },
     {
         "country": "Netherlands",
         "city": "Amsterdam",
         "visitDates": [
-            "2024"
+            "2024",
+            "2026"
         ],
         "images_directory": "",
         "latitude": 52.3730796,
@@ -623,6 +629,182 @@
         "images_directory": "",
         "latitude": -2.3712909499999997,
         "longitude": 34.69838278510568,
+        "images": []
+    },
+    {
+        "country": "USA",
+        "city": "Miami",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 25.6898965,
+        "longitude": -80.3123572,
+        "images": []
+    },
+    {
+        "country": "Spain",
+        "city": "Madrid",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 40.416782,
+        "longitude": -3.703507,
+        "images": []
+    },
+    {
+        "country": "Spain",
+        "city": "Valencia",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 39.4697065,
+        "longitude": -0.3763353,
+        "images": []
+    },
+    {
+        "country": "Spain",
+        "city": "Toledo",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 39.8558913,
+        "longitude": -4.024265,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Ciudad de Mexico",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 19.4326296,
+        "longitude": -99.1331785,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Puebla",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 18.833333,
+        "longitude": -98.0,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Tlaxcala",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 19.416667,
+        "longitude": -98.166667,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Malinalco",
+        "visitDates": [
+            "2019"
+        ],
+        "images_directory": "",
+        "latitude": 18.893825999999997,
+        "longitude": -99.49416230442063,
+        "images": []
+    },
+    {
+        "country": "Mexico",
+        "city": "Monterrey",
+        "visitDates": [
+            "2018"
+        ],
+        "images_directory": "",
+        "latitude": 25.6802019,
+        "longitude": -100.315258,
+        "images": []
+    },
+    {
+        "country": "Portugal",
+        "city": "Lisboa",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 38.7077507,
+        "longitude": -9.1365919,
+        "images": []
+    },
+    {
+        "country": "Serbia",
+        "city": "Belgrado",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 44.7966946,
+        "longitude": 20.4696208,
+        "images": []
+    },
+    {
+        "country": "Bulgaria",
+        "city": "Sofia",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 42.6977028,
+        "longitude": 23.3217359,
+        "images": []
+    },
+    {
+        "country": "Romania",
+        "city": "Craiova",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 44.3190159,
+        "longitude": 23.7965614,
+        "images": []
+    },
+    {
+        "country": "Romania",
+        "city": "Brasov",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 45.6525105,
+        "longitude": 25.6105654,
+        "images": []
+    },
+    {
+        "country": "Romania",
+        "city": "Bucharest",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 44.4361414,
+        "longitude": 26.102684,
+        "images": []
+    },
+    {
+        "country": "Belgium",
+        "city": "Bruges",
+        "visitDates": [
+            "2025"
+        ],
+        "images_directory": "",
+        "latitude": 51.2085526,
+        "longitude": 3.226772,
         "images": []
     }
 ]

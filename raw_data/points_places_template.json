@@ -19,9 +19,9 @@
     {"country": "Cuba", "city": "Matanzas", "visitDates": ["2020"], "images_directory": ""},
     {"country": "Cuba", "city": "Varadero", "visitDates": ["2020"], "images_directory": ""},
     {"country": "Mexico", "city": "Cozumel", "visitDates": ["2021"], "images_directory": ""},
-    {"country": "Mexico", "city": "Playa del Carmen", "visitDates": ["2021"], "images_directory": ""},
+    {"country": "Mexico", "city": "Playa del Carmen", "visitDates": ["2021", "2025"], "images_directory": ""},
     {"country": "Mexico", "city": "Puerto Morelos", "visitDates": ["2021"], "images_directory": ""},
-    {"country": "Mexico", "city": "Cancun", "visitDates": ["2021"], "images_directory": ""},
+    {"country": "Mexico", "city": "Cancun", "visitDates": ["2021", "2025"], "images_directory": ""},
     {"country": "Mexico", "city": "Los Cabos", "visitDates": ["2022"], "images_directory": ""},
     {"country": "Mexico", "city": "Manzanillo", "visitDates": ["2016"], "images_directory": ""},
     {"country": "Mexico", "city": "Mazamitla", "visitDates": ["2020"], "images_directory": ""},
@@ -51,10 +51,29 @@
     {"country": "Paraguay", "city": "Ciudad del Este", "visitDates": ["2022"], "images_directory": ""},
     {"country": "Brazil", "city": "Sao Paulo", "visitDates": ["2022"], "images_directory": ""},
     {"country": "Brazil", "city": "Rio de Janeiro", "visitDates": ["2022"], "images_directory": ""},
-    {"country": "France", "city": "Paris", "visitDates": ["2023"], "images_directory": ""},
-    {"country": "Netherlands", "city": "Amsterdam", "visitDates": ["2024"], "images_directory": ""},
+    {"country": "France", "city": "Paris", "visitDates": ["2023", "2026"], "images_directory": ""},
+    {"country": "Netherlands", "city": "Amsterdam", "visitDates": ["2024", "2026"], "images_directory": ""},
     {"country": "Italy", "city": "Rome", "visitDates": ["2023"], "images_directory": ""},
     {"country": "Tanzania", "city": "Kilimanjaro", "visitDates": ["2024"], "images_directory": ""},
-    {"country": "Tanzania", "city": "Serengeti", "visitDates": ["2024"], "images_directory": ""}
+    {"country": "Tanzania", "city": "Serengeti", "visitDates": ["2024"], "images_directory": ""},
+
+    {"country": "USA", "city": "Miami", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Spain", "city": "Madrid", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Spain", "city": "Valencia", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Spain", "city": "Toledo", "visitDates": ["2025"], "images_directory": ""},
+
+    {"country": "Mexico", "city": "Ciudad de Mexico", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Mexico", "city": "Puebla", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Mexico", "city": "Tlaxcala", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Mexico", "city": "Malinalco", "visitDates": ["2019"], "images_directory": ""},
+    {"country": "Mexico", "city": "Monterrey", "visitDates": ["2018"], "images_directory": ""},
+
+    {"country": "Portugal", "city": "Lisboa", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Serbia", "city": "Belgrado", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Bulgaria", "city": "Sofia", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Romania", "city": "Craiova", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Romania", "city": "Brasov", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Romania", "city": "Bucharest", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Belgium", "city": "Bruges", "visitDates": ["2025"], "images_directory": ""}
   ]
   
