@@ -69,5 +69,4 @@ window.onload = function () {
         })
         .catch(error => console.error("Error fetching JSON:", error));
 };
-import { createPopupContent } from './popupContent.js';
 
