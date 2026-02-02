@@ -74,6 +74,9 @@
     {"country": "Romania", "city": "Craiova", "visitDates": ["2025"], "images_directory": ""},
     {"country": "Romania", "city": "Brasov", "visitDates": ["2025"], "images_directory": ""},
     {"country": "Romania", "city": "Bucharest", "visitDates": ["2025"], "images_directory": ""},
-    {"country": "Belgium", "city": "Bruges", "visitDates": ["2025"], "images_directory": ""}
+    {"country": "Belgium", "city": "Bruges", "visitDates": ["2025"], "images_directory": ""},
+
+    {"country": "Germany", "city": "Berlin", "visitDates": ["2026"], "images_directory": ""},
+    {"country": "United Kingdom", "city": "London", "visitDates": ["2026"], "images_directory": ""}
   ]
   
