@@ -35,14 +35,19 @@ window.onload = function () {
         homeButton: true,
         selectionIndicator: true,
         infoBox: false,
-        imageryProvider: new Cesium.OpenStreetMapImageryProvider({
-            url: "https://tile.openstreetmap.org/",
-        }),
     });
 
-    viewer.scene.globe.enableLighting = true;
+    viewer.imageryLayers.removeAll();
+    viewer.imageryLayers.addImageryProvider(
+        new Cesium.UrlTemplateImageryProvider({
+            url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            credit: "© OpenStreetMap contributors",
+        }),
+    );
+
+    viewer.scene.globe.enableLighting = false;
     viewer.scene.skyAtmosphere.show = true;
-    viewer.scene.globe.depthTestAgainstTerrain = true;
+    viewer.scene.globe.depthTestAgainstTerrain = false;
 
     fetch("./generated_data/points_places.json")
         .then(response => response.json())
@@ -76,11 +81,11 @@ window.onload = function () {
                     position: Cesium.Cartesian3.fromDegrees(place.longitude, place.latitude),
                     placeData: place,
                     point: {
-                        pixelSize: 10,
+                        pixelSize: 8,
                         color: Cesium.Color.fromCssColorString("#ff5a2a"),
                         outlineColor: Cesium.Color.WHITE,
                         outlineWidth: 2,
-                        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
                     },
                 });
             });
@@ -119,17 +124,7 @@ window.onload = function () {
             });
 
             if (validCoords.length > 0) {
-                const longitudes = validCoords.map(c => c[0]);
-                const latitudes = validCoords.map(c => c[1]);
-                const west = Math.min(...longitudes);
-                const east = Math.max(...longitudes);
-                const south = Math.max(Math.min(...latitudes) - 5, -89);
-                const north = Math.min(Math.max(...latitudes) + 5, 89);
-
-                viewer.camera.flyTo({
-                    destination: Cesium.Rectangle.fromDegrees(west, south, east, north),
-                    duration: 1.6,
-                });
+                viewer.zoomTo(viewer.entities, new Cesium.HeadingPitchRange(0, -1.2, 22000000));
             }
         })
         .catch(error => console.error("Error fetching JSON:", error));
