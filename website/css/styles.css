@@ -2,7 +2,7 @@
     --bg-night-1: #02030b;
     --bg-night-2: #040918;
     --bg-night-3: #0a1630;
-    --panel-bg: rgba(7, 10, 18, 0.8);
+    --panel-bg: rgba(7, 10, 18, 0.58);
     --panel-border: rgba(132, 164, 255, 0.18);
     --text-main: #eef3ff;
     --text-muted: #aeb8d8;
@@ -31,7 +31,7 @@ body::before {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    opacity: 0.9;
+    opacity: 0.48;
     background-image:
         radial-gradient(circle at 12% 22%, rgba(255, 255, 255, 0.95) 0 1px, transparent 1.5px),
         radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.7) 0 1px, transparent 1.5px),
@@ -46,12 +46,12 @@ body::before {
     margin: 0;
     padding: 0;
     position: relative;
-    background: transparent;
+    background: radial-gradient(circle at 50% 46%, rgba(9, 18, 34, 0.82), rgba(2, 4, 10, 0.96) 70%);
 }
 
 .maplibregl-canvas-container,
 .maplibregl-canvas {
-    background: transparent !important;
+    background: radial-gradient(circle at 50% 46%, rgba(9, 18, 34, 0.78), rgba(2, 4, 10, 0.96) 72%) !important;
 }
 
 .custom-hr {
@@ -74,7 +74,7 @@ body::before {
     background: var(--panel-bg);
     border: 1px solid var(--panel-border);
     border-radius: 16px;
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(14px);
     box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
 }
 
@@ -86,7 +86,7 @@ body::before {
     max-width: min(320px, calc(100vw - 24px));
     padding: 0.75rem 1rem;
     color: var(--text-main);
-    background: rgba(10, 14, 24, 0.9);
+    background: rgba(10, 14, 24, 0.72);
     border-left: 4px solid var(--accent);
     border-radius: 14px;
     border-top-left-radius: 4px;
@@ -97,23 +97,6 @@ body::before {
 .map-status.is-error {
     color: #ffdbe1;
     border-left-color: #c43b4d;
-}
-
-.place-marker {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.95);
-    background: var(--marker);
-    box-shadow: 0 0 0 2px rgba(10, 18, 32, 0.55), 0 0 22px rgba(255, 132, 92, 0.45);
-    cursor: pointer;
-    padding: 0;
-}
-
-.place-marker:hover,
-.place-marker:focus-visible {
-    transform: scale(1.12);
-    outline: none;
 }
 
 .maplibregl-ctrl-group {
@@ -129,6 +112,8 @@ body::before {
     width: 42px;
     height: 42px;
     background: transparent;
+    color: var(--text-main);
+    font-weight: 700;
 }
 
 .maplibregl-ctrl-group button:hover {
@@ -177,13 +162,13 @@ body::before {
 .place-popup-card {
     width: 15rem;
     border: 1px solid rgba(122, 162, 255, 0.16);
-    background: rgba(10, 15, 28, 0.96);
+    background: rgba(10, 15, 28, 0.84);
     color: var(--text-main);
     box-shadow: none;
 }
 
 .place-popup-card .card-header {
-    background: linear-gradient(180deg, rgba(18, 32, 60, 0.98), rgba(10, 15, 28, 0.98));
+    background: linear-gradient(180deg, rgba(18, 32, 60, 0.82), rgba(10, 15, 28, 0.82));
     color: var(--text-main);
     border-bottom: 1px solid rgba(122, 162, 255, 0.16);
 }
@@ -198,7 +183,7 @@ body::before {
 .place-popup-empty {
     padding: 1rem;
     color: var(--text-muted);
-    background: linear-gradient(180deg, rgba(14, 23, 40, 0.92), rgba(9, 13, 24, 0.96));
+    background: linear-gradient(180deg, rgba(14, 23, 40, 0.74), rgba(9, 13, 24, 0.82));
 }
 
 .place-popup-dates p:last-child {

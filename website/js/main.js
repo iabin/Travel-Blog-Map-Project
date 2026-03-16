@@ -4,16 +4,16 @@ import { createPopupContent } from "./popupContent.js";
 const DATA_URL = "./generated_data/points_places.json";
 const MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/dark";
 const TERRAIN_SOURCE_ID = "travel-terrain";
-const HILLSHADE_SOURCE_ID = "travel-hillshade";
+const SATELLITE_SOURCE_ID = "travel-satellite";
+const PLACE_SOURCE_ID = "travel-places";
+const SATELLITE_LAYER_ID = "travel-satellite-layer";
 const HILLSHADE_LAYER_ID = "travel-hillshade-layer";
+const PLACE_HALO_LAYER_ID = "travel-places-halo-layer";
+const PLACE_LAYER_ID = "travel-places-layer";
 const TERRAIN_TILEJSON_URL = "https://demotiles.maplibre.org/terrain-tiles/tiles.json";
-const TERRAIN_FOCUS_CITY_NAMES = new Set(["andermatt", "hockenhorn", "kilimanjaro", "bariloche", "cusco"]);
-const DEFAULT_TERRAIN_FOCUS = {
-    center: [8.18, 46.63],
-    zoom: 6.6,
-    pitch: 78,
-    bearing: 28,
-};
+const SATELLITE_TILE_URL = "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg";
+const SATELLITE_ATTRIBUTION =
+    'Sentinel-2 cloudless - <a href="https://s2maps.eu" target="_blank" rel="noopener">s2maps.eu</a> by EOX IT Services GmbH';
 
 function updateStats(jsonData) {
     const elCountries = document.getElementById("stat-countries");
@@ -25,14 +25,15 @@ function updateStats(jsonData) {
 
     const countries = new Set();
     if (Array.isArray(jsonData)) {
-        jsonData.forEach(p => {
-            if (p && typeof p.country === "string") countries.add(p.country);
+        jsonData.forEach(place => {
+            if (place && typeof place.country === "string") {
+                countries.add(place.country);
+            }
         });
     }
 
-    const placesCount = Array.isArray(jsonData) ? jsonData.length : 0;
     elCountries.textContent = String(countries.size);
-    elPlaces.textContent = String(placesCount);
+    elPlaces.textContent = String(Array.isArray(jsonData) ? jsonData.length : 0);
 }
 
 function setStatus(message, isError = false) {
@@ -142,7 +143,7 @@ function buildPlaces(jsonData) {
     );
 }
 
-function renderPlaces(map, places) {
+function fitMapToPlaces(map, places) {
     const bounds = new maplibregl.LngLatBounds();
     let hasValidBounds = false;
 
@@ -151,29 +152,6 @@ function renderPlaces(map, places) {
             console.error(`Missing coordinates for ${place.city}, ${place.country}`);
             return;
         }
-
-        const popup = new maplibregl.Popup({
-            offset: 18,
-            maxWidth: "340px",
-            closeButton: true,
-        }).setHTML(createPopupContent(place));
-
-        popup.on("open", () => {
-            initializePopupCarousel(popup);
-        });
-
-        const markerEl = document.createElement("button");
-        markerEl.type = "button";
-        markerEl.className = "place-marker";
-        markerEl.setAttribute("aria-label", `${place.city}, ${place.country}`);
-
-        new maplibregl.Marker({
-            element: markerEl,
-            anchor: "center",
-        })
-            .setLngLat([place.longitude, place.latitude])
-            .setPopup(popup)
-            .addTo(map);
 
         bounds.extend([place.longitude, place.latitude]);
         hasValidBounds = true;
@@ -188,32 +166,29 @@ function renderPlaces(map, places) {
     }
 }
 
-function normalizeName(value) {
-    return String(value ?? "").trim().toLowerCase();
+function createPlaceFeatureCollection(places) {
+    return {
+        type: "FeatureCollection",
+        features: places
+            .filter(place => place.latitude != null && place.longitude != null)
+            .map((place, index) => ({
+                type: "Feature",
+                id: index,
+                geometry: {
+                    type: "Point",
+                    coordinates: [place.longitude, place.latitude],
+                },
+                properties: {
+                    name: `${place.city}, ${place.country}`,
+                    popupHtml: createPopupContent(place),
+                },
+            })),
+    };
 }
 
-function getTerrainFocus(places) {
-    const mountainPlaces = places.filter(place => TERRAIN_FOCUS_CITY_NAMES.has(normalizeName(place.city)));
-
-    if (mountainPlaces.length === 0) {
-        return DEFAULT_TERRAIN_FOCUS;
-    }
-
-    const totals = mountainPlaces.reduce(
-        (accumulator, place) => {
-            accumulator.latitude += place.latitude;
-            accumulator.longitude += place.longitude;
-            return accumulator;
-        },
-        { latitude: 0, longitude: 0 },
-    );
-
-    return {
-        center: [totals.longitude / mountainPlaces.length, totals.latitude / mountainPlaces.length],
-        zoom: 6.8,
-        pitch: 78,
-        bearing: 28,
-    };
+function getFirstNonFillBackgroundLayerId(map) {
+    const layers = map.getStyle()?.layers ?? [];
+    return layers.find(layer => layer.type !== "background" && layer.type !== "fill")?.id;
 }
 
 function getFirstSymbolLayerId(map) {
@@ -221,12 +196,118 @@ function getFirstSymbolLayerId(map) {
     return layers.find(layer => layer.type === "symbol")?.id;
 }
 
-function setHillshadeVisibility(map, isVisible) {
-    if (!map.getLayer(HILLSHADE_LAYER_ID)) {
+function setLayerVisibility(map, layerId, isVisible) {
+    if (!map.getLayer(layerId)) {
         return;
     }
 
-    map.setLayoutProperty(HILLSHADE_LAYER_ID, "visibility", isVisible ? "visible" : "none");
+    map.setLayoutProperty(layerId, "visibility", isVisible ? "visible" : "none");
+}
+
+function syncTerrainMode(map) {
+    const terrainEnabled = typeof map.getTerrain === "function" && Boolean(map.getTerrain());
+    setLayerVisibility(map, SATELLITE_LAYER_ID, terrainEnabled);
+    setLayerVisibility(map, HILLSHADE_LAYER_ID, terrainEnabled);
+}
+
+function addPlaceLayers(map, places) {
+    if (!map.getSource(PLACE_SOURCE_ID)) {
+        map.addSource(PLACE_SOURCE_ID, {
+            type: "geojson",
+            data: createPlaceFeatureCollection(places),
+        });
+    }
+
+    if (!map.getLayer(PLACE_HALO_LAYER_ID)) {
+        map.addLayer({
+            id: PLACE_HALO_LAYER_ID,
+            type: "circle",
+            source: PLACE_SOURCE_ID,
+            paint: {
+                "circle-color": "rgba(255, 132, 92, 0.1)",
+                "circle-radius": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0,
+                    2.8,
+                    3,
+                    4.4,
+                    8,
+                    6.5,
+                ],
+                "circle-blur": 0.45,
+            },
+        });
+    }
+
+    if (!map.getLayer(PLACE_LAYER_ID)) {
+        map.addLayer({
+            id: PLACE_LAYER_ID,
+            type: "circle",
+            source: PLACE_SOURCE_ID,
+            paint: {
+                "circle-color": "#ff845c",
+                "circle-stroke-color": "rgba(255, 255, 255, 0.94)",
+                "circle-stroke-width": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0,
+                    1.05,
+                    8,
+                    1.55,
+                ],
+                "circle-radius": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0,
+                    1.9,
+                    3,
+                    3.2,
+                    8,
+                    4.8,
+                ],
+            },
+        });
+    }
+}
+
+function wirePlaceInteractions(map) {
+    map.on("mouseenter", PLACE_LAYER_ID, () => {
+        map.getCanvas().style.cursor = "pointer";
+    });
+
+    map.on("mouseleave", PLACE_LAYER_ID, () => {
+        map.getCanvas().style.cursor = "";
+    });
+
+    map.on("click", PLACE_LAYER_ID, event => {
+        const feature = event.features?.[0];
+
+        if (!feature || feature.geometry?.type !== "Point") {
+            return;
+        }
+
+        const coordinates = feature.geometry.coordinates.slice();
+        const popupHtml = typeof feature.properties?.popupHtml === "string" ? feature.properties.popupHtml : "";
+
+        while (Math.abs(event.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += event.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        const popup = new maplibregl.Popup({
+            offset: 18,
+            maxWidth: "340px",
+            closeButton: true,
+        })
+            .setLngLat(coordinates)
+            .setHTML(popupHtml)
+            .addTo(map);
+
+        initializePopupCarousel(popup);
+    });
 }
 
 function ensureTerrainSupport(map) {
@@ -238,12 +319,31 @@ function ensureTerrainSupport(map) {
         });
     }
 
-    if (!map.getSource(HILLSHADE_SOURCE_ID)) {
-        map.addSource(HILLSHADE_SOURCE_ID, {
-            type: "raster-dem",
-            url: TERRAIN_TILEJSON_URL,
+    if (!map.getSource(SATELLITE_SOURCE_ID)) {
+        map.addSource(SATELLITE_SOURCE_ID, {
+            type: "raster",
+            tiles: [SATELLITE_TILE_URL],
             tileSize: 256,
+            attribution: SATELLITE_ATTRIBUTION,
         });
+    }
+
+    if (!map.getLayer(SATELLITE_LAYER_ID)) {
+        map.addLayer(
+            {
+                id: SATELLITE_LAYER_ID,
+                type: "raster",
+                source: SATELLITE_SOURCE_ID,
+                layout: {
+                    visibility: "none",
+                },
+                paint: {
+                    "raster-opacity": 1,
+                    "raster-fade-duration": 0,
+                },
+            },
+            getFirstNonFillBackgroundLayerId(map),
+        );
     }
 
     if (!map.getLayer(HILLSHADE_LAYER_ID)) {
@@ -251,20 +351,23 @@ function ensureTerrainSupport(map) {
             {
                 id: HILLSHADE_LAYER_ID,
                 type: "hillshade",
-                source: HILLSHADE_SOURCE_ID,
+                source: TERRAIN_SOURCE_ID,
                 layout: {
                     visibility: "none",
                 },
                 paint: {
-                    "hillshade-shadow-color": "#020611",
-                    "hillshade-highlight-color": "#7aa2ff",
-                    "hillshade-accent-color": "#0f1e38",
-                    "hillshade-exaggeration": 0.28,
+                    "hillshade-shadow-color": "rgba(3, 7, 18, 0.78)",
+                    "hillshade-highlight-color": "rgba(210, 226, 255, 0.32)",
+                    "hillshade-accent-color": "rgba(28, 52, 92, 0.42)",
+                    "hillshade-exaggeration": 0.32,
+                    "hillshade-method": "multidirectional",
                 },
             },
             getFirstSymbolLayerId(map),
         );
     }
+
+    syncTerrainMode(map);
 }
 
 function addSceneControls(map) {
@@ -276,52 +379,14 @@ function addSceneControls(map) {
         map.addControl(
             new maplibregl.TerrainControl({
                 source: TERRAIN_SOURCE_ID,
-                exaggeration: 1.3,
+                exaggeration: 1.18,
             }),
             "top-right",
         );
     }
-}
-
-function attachTerrainCameraBehavior(map, terrainFocus) {
-    if (typeof map.getTerrain !== "function") {
-        return;
-    }
-
-    let lastTerrainEnabled = Boolean(map.getTerrain());
 
     map.on("terrain", () => {
-        const terrainEnabled = Boolean(map.getTerrain());
-
-        if (terrainEnabled === lastTerrainEnabled) {
-            return;
-        }
-
-        lastTerrainEnabled = terrainEnabled;
-        setHillshadeVisibility(map, terrainEnabled);
-
-        if (!terrainEnabled) {
-            map.easeTo({
-                pitch: 0,
-                bearing: 0,
-                duration: 1100,
-                essential: true,
-            });
-            return;
-        }
-
-        const currentCenter = map.getCenter();
-        const currentZoom = map.getZoom();
-        const targetCenter = currentZoom >= 5 ? [currentCenter.lng, currentCenter.lat] : terrainFocus.center;
-
-        map.easeTo({
-            center: targetCenter,
-            zoom: Math.max(currentZoom, terrainFocus.zoom),
-            pitch: terrainFocus.pitch,
-            bearing: terrainFocus.bearing,
-            duration: 1800,
-            essential: true,
-        });
+        syncTerrainMode(map);
     });
 }
 
@@ -340,32 +405,35 @@ async function initializeMap() {
         if (typeof map.setSky === "function") {
             map.setSky({
                 "sky-color": "#02030b",
-                "sky-horizon-blend": 0.22,
-                "horizon-color": "#112447",
-                "horizon-fog-blend": 0.22,
+                "sky-horizon-blend": 0.16,
+                "horizon-color": "#0b1a36",
+                "horizon-fog-blend": 0.16,
                 "fog-color": "#020611",
-                "fog-ground-blend": 0.1,
+                "fog-ground-blend": 0.08,
                 "atmosphere-blend": [
                     "interpolate",
                     ["linear"],
                     ["zoom"],
                     0,
                     1,
-                    5,
-                    0.92,
+                    4,
+                    0.98,
+                    6,
+                    0.94,
                     8,
-                    0.35,
+                    0.82,
                     10,
-                    0.12,
+                    0.68,
                 ],
             });
         }
 
         ensureTerrainSupport(map);
         addSceneControls(map);
-        attachTerrainCameraBehavior(map, getTerrainFocus(places));
+        addPlaceLayers(map, places);
+        wirePlaceInteractions(map);
         updateStats(jsonData);
-        renderPlaces(map, places);
+        fitMapToPlaces(map, places);
         setStatus("");
     } catch (error) {
         console.error("Error loading map:", error);
@@ -376,4 +444,3 @@ async function initializeMap() {
 window.addEventListener("load", () => {
     void initializeMap();
 });
-
