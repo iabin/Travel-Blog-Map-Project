@@ -5,16 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Travel Blog Map</title>
 
-        <link rel="stylesheet" href="./libs/css/leaflet.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.117/Build/Cesium/Widgets/widgets.css" />
         <link rel="stylesheet" href="./libs/css/bootstrap.min.css" crossorigin="anonymous" />
         <link rel="stylesheet" href="./css/styles.css" />
 
-        <script src="./libs/js/leaflet.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/cesium@1.117/Build/Cesium/Cesium.js"></script>
         <script src="./libs/js/bootstrap.min.js" crossorigin="anonymous" defer></script>
         <script type="module" src="./js/main.js"></script>
     </head>
     <body>
         <div id="map"></div>
+
+        <div id="place-popup" class="place-popup d-none" aria-live="polite"></div>
 
         <div id="stats" class="map-overlay card" aria-live="polite">
             <div class="card-body">

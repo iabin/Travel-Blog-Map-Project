@@ -59,6 +59,7 @@
 
     {"country": "USA", "city": "Miami", "visitDates": ["2025"], "images_directory": ""},
     {"country": "Spain", "city": "Madrid", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Spain", "city": "Cuenca", "visitDates": ["2025"], "images_directory": ""},
     {"country": "Spain", "city": "Valencia", "visitDates": ["2025"], "images_directory": ""},
     {"country": "Spain", "city": "Toledo", "visitDates": ["2025"], "images_directory": ""},
 
@@ -75,8 +76,16 @@
     {"country": "Romania", "city": "Brasov", "visitDates": ["2025"], "images_directory": ""},
     {"country": "Romania", "city": "Bucharest", "visitDates": ["2025"], "images_directory": ""},
     {"country": "Belgium", "city": "Bruges", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "France", "city": "Lille", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "France", "city": "Tourcoing", "visitDates": ["2025"], "images_directory": ""},
+    {"country": "Switzerland", "city": "Geneva", "visitDates": ["2026"], "images_directory": ""},
+    {"country": "Switzerland", "city": "Vevey", "visitDates": ["2026"], "images_directory": ""},
+    {"country": "Switzerland", "city": "Hockenhorn", "visitDates": ["2026"], "images_directory": ""},
+    {"country": "Switzerland", "city": "Andermatt", "visitDates": ["2026"], "images_directory": ""},
+    {"country": "Switzerland", "city": "Zurich", "visitDates": ["2026"], "images_directory": ""},
 
     {"country": "Germany", "city": "Berlin", "visitDates": ["2026"], "images_directory": ""},
+    {"country": "Germany", "city": "Potsdam", "visitDates": ["2026"], "images_directory": ""},
     {"country": "United Kingdom", "city": "London", "visitDates": ["2026"], "images_directory": ""}
   ]
   

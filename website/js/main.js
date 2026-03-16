@@ -22,11 +22,27 @@ function updateStats(jsonData) {
 }
 
 window.onload = function () {
-    var map = L.map("map").setView([0, 0], 3);
+    const popupHost = document.getElementById("place-popup");
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
-    }).addTo(map);
+    const viewer = new Cesium.Viewer("map", {
+        timeline: false,
+        animation: false,
+        geocoder: false,
+        sceneModePicker: false,
+        baseLayerPicker: false,
+        navigationHelpButton: false,
+        shouldAnimate: false,
+        homeButton: true,
+        selectionIndicator: true,
+        infoBox: false,
+        imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+            url: "https://tile.openstreetmap.org/",
+        }),
+    });
+
+    viewer.scene.globe.enableLighting = true;
+    viewer.scene.skyAtmosphere.show = true;
+    viewer.scene.globe.depthTestAgainstTerrain = true;
 
     fetch("./generated_data/points_places.json")
         .then(response => response.json())
@@ -45,7 +61,7 @@ window.onload = function () {
                     ),
             );
 
-            const markerGroup = L.featureGroup().addTo(map);
+            const validCoords = [];
 
             list_of_places.forEach(place => {
                 if (place.latitude == null || place.longitude == null) {
@@ -53,18 +69,67 @@ window.onload = function () {
                     return;
                 }
 
-                var marker = L.marker([place.latitude, place.longitude]).addTo(markerGroup);
-                marker.on("click", function () {
-                    var popupContent = createPopupContent(place);
-                    L.popup()
-                        .setLatLng([place.latitude, place.longitude])
-                        .setContent(popupContent)
-                        .openOn(map);
+                validCoords.push([place.longitude, place.latitude]);
+
+                viewer.entities.add({
+                    name: `${place.country} - ${place.city}`,
+                    position: Cesium.Cartesian3.fromDegrees(place.longitude, place.latitude),
+                    placeData: place,
+                    point: {
+                        pixelSize: 10,
+                        color: Cesium.Color.fromCssColorString("#ff5a2a"),
+                        outlineColor: Cesium.Color.WHITE,
+                        outlineWidth: 2,
+                        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    },
                 });
             });
 
-            if (markerGroup.getLayers().length > 0) {
-                map.fitBounds(markerGroup.getBounds().pad(0.15));
+            viewer.selectedEntityChanged.addEventListener(selected => {
+                if (!popupHost) {
+                    return;
+                }
+
+                if (!selected || !selected.placeData) {
+                    popupHost.classList.add("d-none");
+                    popupHost.innerHTML = "";
+                    return;
+                }
+
+                popupHost.classList.remove("d-none");
+                popupHost.innerHTML = `
+                    <div class="popup-actions">
+                        <button type="button" class="btn btn-sm btn-light" id="close-place-popup" aria-label="Close">Close</button>
+                    </div>
+                    ${createPopupContent(selected.placeData)}
+                `;
+
+                const closeBtn = document.getElementById("close-place-popup");
+                if (closeBtn) {
+                    closeBtn.addEventListener("click", () => {
+                        viewer.selectedEntity = undefined;
+                    });
+                }
+
+                if (typeof bootstrap !== "undefined") {
+                    popupHost.querySelectorAll(".carousel").forEach(el => {
+                        bootstrap.Carousel.getOrCreateInstance(el);
+                    });
+                }
+            });
+
+            if (validCoords.length > 0) {
+                const longitudes = validCoords.map(c => c[0]);
+                const latitudes = validCoords.map(c => c[1]);
+                const west = Math.min(...longitudes);
+                const east = Math.max(...longitudes);
+                const south = Math.max(Math.min(...latitudes) - 5, -89);
+                const north = Math.min(Math.max(...latitudes) + 5, 89);
+
+                viewer.camera.flyTo({
+                    destination: Cesium.Rectangle.fromDegrees(west, south, east, north),
+                    duration: 1.6,
+                });
             }
         })
         .catch(error => console.error("Error fetching JSON:", error));

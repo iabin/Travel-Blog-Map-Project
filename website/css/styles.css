@@ -14,11 +14,12 @@ body {
     padding: 0;
 }
 
-.leaflet-layer,
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out,
-.leaflet-control-attribution {
-  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+.cesium-viewer,
+.cesium-viewer-cesiumWidget,
+.cesium-widget,
+.cesium-widget canvas {
+  height: 100%;
+  width: 100%;
 }
 
 .custom-hr {
@@ -37,4 +38,26 @@ body {
   z-index: 1000;
   width: 240px;
   border-radius: 0;
+}
+
+.cesium-infoBox {
+  max-width: 360px;
+}
+
+.place-popup {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1100;
+  max-width: 320px;
+}
+
+.place-popup .card {
+  width: 100% !important;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
 }
