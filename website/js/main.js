@@ -22,32 +22,26 @@ function updateStats(jsonData) {
 }
 
 window.onload = function () {
-    const popupHost = document.getElementById("place-popup");
-
-    const viewer = new Cesium.Viewer("map", {
-        timeline: false,
-        animation: false,
-        geocoder: false,
-        sceneModePicker: false,
-        baseLayerPicker: false,
-        navigationHelpButton: false,
-        shouldAnimate: false,
-        homeButton: true,
-        selectionIndicator: true,
-        infoBox: false,
+    const map = new maplibregl.Map({
+        container: "map",
+        style: "https://demotiles.maplibre.org/style.json",
+        center: [0, 20],
+        zoom: 1.35,
+        projection: "globe",
+        attributionControl: true,
     });
 
-    viewer.imageryLayers.removeAll();
-    viewer.imageryLayers.addImageryProvider(
-        new Cesium.UrlTemplateImageryProvider({
-            url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-            credit: "© OpenStreetMap contributors",
-        }),
-    );
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
 
-    viewer.scene.globe.enableLighting = false;
-    viewer.scene.skyAtmosphere.show = true;
-    viewer.scene.globe.depthTestAgainstTerrain = false;
+    map.on("style.load", () => {
+        map.setFog({
+            "horizon-blend": 0.14,
+            color: "#e8f0ff",
+            "high-color": "#d3e3ff",
+            "space-color": "#0f1424",
+            "star-intensity": 0.18,
+        });
+    });
 
     fetch("./generated_data/points_places.json")
         .then(response => response.json())
@@ -66,7 +60,8 @@ window.onload = function () {
                     ),
             );
 
-            const validCoords = [];
+            const bounds = new maplibregl.LngLatBounds();
+            let hasValidBounds = false;
 
             list_of_places.forEach(place => {
                 if (place.latitude == null || place.longitude == null) {
@@ -74,57 +69,43 @@ window.onload = function () {
                     return;
                 }
 
-                validCoords.push([place.longitude, place.latitude]);
+                const popup = new maplibregl.Popup({
+                    offset: 20,
+                    maxWidth: "340px",
+                    closeButton: true,
+                }).setHTML(createPopupContent(place));
 
-                viewer.entities.add({
-                    name: `${place.country} - ${place.city}`,
-                    position: Cesium.Cartesian3.fromDegrees(place.longitude, place.latitude),
-                    placeData: place,
-                    point: {
-                        pixelSize: 8,
-                        color: Cesium.Color.fromCssColorString("#ff5a2a"),
-                        outlineColor: Cesium.Color.WHITE,
-                        outlineWidth: 2,
-                        disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                    },
+                popup.on("open", () => {
+                    if (typeof bootstrap !== "undefined") {
+                        document.querySelectorAll(".carousel").forEach(el => {
+                            bootstrap.Carousel.getOrCreateInstance(el);
+                        });
+                    }
                 });
+
+                const markerEl = document.createElement("button");
+                markerEl.type = "button";
+                markerEl.className = "place-marker";
+                markerEl.setAttribute("aria-label", `${place.city}, ${place.country}`);
+
+                new maplibregl.Marker({
+                    element: markerEl,
+                    anchor: "center",
+                })
+                    .setLngLat([place.longitude, place.latitude])
+                    .setPopup(popup)
+                    .addTo(map);
+
+                bounds.extend([place.longitude, place.latitude]);
+                hasValidBounds = true;
             });
 
-            viewer.selectedEntityChanged.addEventListener(selected => {
-                if (!popupHost) {
-                    return;
-                }
-
-                if (!selected || !selected.placeData) {
-                    popupHost.classList.add("d-none");
-                    popupHost.innerHTML = "";
-                    return;
-                }
-
-                popupHost.classList.remove("d-none");
-                popupHost.innerHTML = `
-                    <div class="popup-actions">
-                        <button type="button" class="btn btn-sm btn-light" id="close-place-popup" aria-label="Close">Close</button>
-                    </div>
-                    ${createPopupContent(selected.placeData)}
-                `;
-
-                const closeBtn = document.getElementById("close-place-popup");
-                if (closeBtn) {
-                    closeBtn.addEventListener("click", () => {
-                        viewer.selectedEntity = undefined;
-                    });
-                }
-
-                if (typeof bootstrap !== "undefined") {
-                    popupHost.querySelectorAll(".carousel").forEach(el => {
-                        bootstrap.Carousel.getOrCreateInstance(el);
-                    });
-                }
-            });
-
-            if (validCoords.length > 0) {
-                viewer.zoomTo(viewer.entities, new Cesium.HeadingPitchRange(0, -1.2, 22000000));
+            if (hasValidBounds) {
+                map.fitBounds(bounds, {
+                    padding: 56,
+                    duration: 1300,
+                    maxZoom: 4.2,
+                });
             }
         })
         .catch(error => console.error("Error fetching JSON:", error));
