@@ -176,14 +176,20 @@ async function initializeMap() {
         const map = createMap();
         const [jsonData] = await Promise.all([loadPlaces(), waitForMapStyle(map)]);
 
-        map.setProjection({ type: "globe" });
-        map.setFog({
-            color: "#dce8ff",
-            "high-color": "#1d3d64",
-            "space-color": "#020b16",
-            "horizon-blend": 0.1,
-            "star-intensity": 0.22,
-        });
+        if (typeof map.setProjection === "function") {
+            map.setProjection({ type: "globe" });
+        }
+
+        if (typeof map.setSky === "function") {
+            map.setSky({
+                "sky-color": "#dce8ff",
+                "sky-horizon-blend": 0.16,
+                "horizon-color": "#1d3d64",
+                "horizon-fog-blend": 0.12,
+                "fog-color": "#020b16",
+                "fog-ground-blend": 0.08,
+            });
+        }
 
         updateStats(jsonData);
         renderPlaces(map, buildPlaces(jsonData));
