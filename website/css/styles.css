@@ -1,10 +1,10 @@
 html,
 body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  position: relative;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
 }
 
 #map {
@@ -15,35 +15,75 @@ body {
 }
 
 .custom-hr {
-  margin-top: 5px; /* Adjust as necessary */
-  margin-bottom: 5px; /* Adjust as necessary */
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .carousel-img {
-  max-height: 300px;
+    max-height: 300px;
+    object-fit: cover;
 }
 
 .map-overlay {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 1000;
-  width: 240px;
-  border-radius: 0;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+    width: 240px;
+    border-radius: 0;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.map-status {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    z-index: 1000;
+    max-width: min(320px, calc(100vw - 24px));
+    padding: 0.75rem 1rem;
+    color: #102038;
+    background: rgba(255, 255, 255, 0.95);
+    border-left: 4px solid #2f6fed;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.map-status.is-error {
+    color: #5f1820;
+    border-left-color: #c43b4d;
 }
 
 .place-marker {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid #ffffff;
-  background: #ff5a2a;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  padding: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: #ff5a2a;
+    box-shadow: 0 0 0 2px rgba(12, 23, 38, 0.25);
+    cursor: pointer;
+    padding: 0;
 }
 
 .maplibregl-popup-content {
-  padding: 0;
-  border-radius: 0;
+    padding: 0;
+    border-radius: 0;
+}
+
+.maplibregl-popup-close-button {
+    padding: 0 0.5rem;
+    font-size: 1.25rem;
+}
+
+.place-popup-card {
+    width: 15rem;
+    border: 0;
+}
+
+.place-popup-empty {
+    padding: 1rem;
+    color: #526179;
+    background: #f6f8fb;
+}
+
+.place-popup-dates p:last-child {
+    margin-bottom: 0;
 }
