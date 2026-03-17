@@ -2,13 +2,12 @@ import { Place } from "./Place.js";
 import { createPopupContent } from "./popupContent.js";
 
 const DATA_URL = "./generated_data/points_places.json";
-const MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/dark";
+const MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/fiord";
 const TERRAIN_SOURCE_ID = "travel-terrain";
 const SATELLITE_SOURCE_ID = "travel-satellite";
 const PLACE_SOURCE_ID = "travel-places";
 const SATELLITE_LAYER_ID = "travel-satellite-layer";
 const HILLSHADE_LAYER_ID = "travel-hillshade-layer";
-const PLACE_HALO_LAYER_ID = "travel-places-halo-layer";
 const PLACE_LAYER_ID = "travel-places-layer";
 const TERRAIN_TILEJSON_URL = "https://demotiles.maplibre.org/terrain-tiles/tiles.json";
 const SATELLITE_TILE_URL = "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg";
@@ -129,6 +128,36 @@ function createMap() {
     return map;
 }
 
+function applyGlobeBackdrop(map) {
+    if (typeof map.setSky !== "function") {
+        return;
+    }
+
+    map.setSky({
+        "sky-color": "#02030a",
+        "horizon-color": "#02030a",
+        "fog-color": "#02030a",
+        "sky-horizon-blend": 0.06,
+        "horizon-fog-blend": 0.08,
+        "fog-ground-blend": 0.05,
+        "atmosphere-blend": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            0,
+            0.18,
+            3,
+            0.12,
+            5,
+            0.08,
+            7,
+            0.03,
+            8,
+            0,
+        ],
+    });
+}
+
 function buildPlaces(jsonData) {
     return jsonData.map(
         placeData =>
@@ -179,7 +208,6 @@ function createPlaceFeatureCollection(places) {
                     coordinates: [place.longitude, place.latitude],
                 },
                 properties: {
-                    name: `${place.city}, ${place.country}`,
                     popupHtml: createPopupContent(place),
                 },
             })),
@@ -218,29 +246,6 @@ function addPlaceLayers(map, places) {
         });
     }
 
-    if (!map.getLayer(PLACE_HALO_LAYER_ID)) {
-        map.addLayer({
-            id: PLACE_HALO_LAYER_ID,
-            type: "circle",
-            source: PLACE_SOURCE_ID,
-            paint: {
-                "circle-color": "rgba(255, 132, 92, 0.1)",
-                "circle-radius": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    0,
-                    2.8,
-                    3,
-                    4.4,
-                    8,
-                    6.5,
-                ],
-                "circle-blur": 0.45,
-            },
-        });
-    }
-
     if (!map.getLayer(PLACE_LAYER_ID)) {
         map.addLayer({
             id: PLACE_LAYER_ID,
@@ -248,27 +253,9 @@ function addPlaceLayers(map, places) {
             source: PLACE_SOURCE_ID,
             paint: {
                 "circle-color": "#ff845c",
-                "circle-stroke-color": "rgba(255, 255, 255, 0.94)",
-                "circle-stroke-width": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    0,
-                    1.05,
-                    8,
-                    1.55,
-                ],
-                "circle-radius": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    0,
-                    1.9,
-                    3,
-                    3.2,
-                    8,
-                    4.8,
-                ],
+                "circle-stroke-color": "#ffffff",
+                "circle-stroke-width": 1.2,
+                "circle-radius": 4,
             },
         });
     }
@@ -337,10 +324,6 @@ function ensureTerrainSupport(map) {
                 layout: {
                     visibility: "none",
                 },
-                paint: {
-                    "raster-opacity": 1,
-                    "raster-fade-duration": 0,
-                },
             },
             getFirstNonFillBackgroundLayerId(map),
         );
@@ -354,13 +337,6 @@ function ensureTerrainSupport(map) {
                 source: TERRAIN_SOURCE_ID,
                 layout: {
                     visibility: "none",
-                },
-                paint: {
-                    "hillshade-shadow-color": "rgba(3, 7, 18, 0.78)",
-                    "hillshade-highlight-color": "rgba(210, 226, 255, 0.32)",
-                    "hillshade-accent-color": "rgba(28, 52, 92, 0.42)",
-                    "hillshade-exaggeration": 0.32,
-                    "hillshade-method": "multidirectional",
                 },
             },
             getFirstSymbolLayerId(map),
@@ -402,31 +378,7 @@ async function initializeMap() {
             map.setProjection({ type: "globe" });
         }
 
-        if (typeof map.setSky === "function") {
-            map.setSky({
-                "sky-color": "#02030b",
-                "sky-horizon-blend": 0.16,
-                "horizon-color": "#0b1a36",
-                "horizon-fog-blend": 0.16,
-                "fog-color": "#020611",
-                "fog-ground-blend": 0.08,
-                "atmosphere-blend": [
-                    "interpolate",
-                    ["linear"],
-                    ["zoom"],
-                    0,
-                    1,
-                    4,
-                    0.98,
-                    6,
-                    0.94,
-                    8,
-                    0.82,
-                    10,
-                    0.68,
-                ],
-            });
-        }
+        applyGlobeBackdrop(map);
 
         ensureTerrainSupport(map);
         addSceneControls(map);
@@ -437,7 +389,7 @@ async function initializeMap() {
         setStatus("");
     } catch (error) {
         console.error("Error loading map:", error);
-        setStatus("Could not load the globe. Check the console for details.", true);
+        setStatus("Could not load the map. Check the console for details.", true);
     }
 }
 
