@@ -23,6 +23,11 @@ const COUNTRY_NAME_ALIASES = {
     Tanzania: "United Republic of Tanzania",
     USA: "United States of America",
 };
+const VISITED_COUNTRY_LAYER_IDS = [
+    VISITED_COUNTRY_FILL_LAYER_ID,
+    VISITED_COUNTRY_GLOW_LAYER_ID,
+    VISITED_COUNTRY_LINE_LAYER_ID,
+];
 
 function updateStats(jsonData) {
     const elCountries = document.getElementById("stat-countries");
@@ -271,6 +276,12 @@ function syncTerrainMode(map) {
     setLayerVisibility(map, HILLSHADE_LAYER_ID, terrainEnabled);
 }
 
+function setVisitedCountryVisibility(map, isVisible) {
+    VISITED_COUNTRY_LAYER_IDS.forEach(layerId => {
+        setLayerVisibility(map, layerId, isVisible);
+    });
+}
+
 function addVisitedCountryLayers(map, jsonData) {
     const visitedCountryNames = getVisitedCountryNames(jsonData);
     if (!visitedCountryNames.length) {
@@ -467,24 +478,131 @@ function ensureTerrainSupport(map) {
     syncTerrainMode(map);
 }
 
-function addSceneControls(map) {
-    if (typeof maplibregl.GlobeControl === "function") {
-        map.addControl(new maplibregl.GlobeControl(), "top-right");
+function setProjectionMode(map, useGlobe) {
+    if (typeof map.setProjection !== "function") {
+        return;
     }
 
-    if (typeof maplibregl.TerrainControl === "function") {
-        map.addControl(
-            new maplibregl.TerrainControl({
-                source: TERRAIN_SOURCE_ID,
-                exaggeration: 1.18,
+    map.setProjection({ type: useGlobe ? "globe" : "mercator" });
+}
+
+function setTerrainMode(map, isEnabled) {
+    if (typeof map.setTerrain !== "function") {
+        return;
+    }
+
+    map.setTerrain(
+        isEnabled
+            ? {
+                  source: TERRAIN_SOURCE_ID,
+                  exaggeration: 1.18,
+              }
+            : null,
+    );
+    syncTerrainMode(map);
+}
+
+class ScenePanelControl {
+    constructor() {
+        this.map = null;
+        this.container = null;
+        this.buttons = {};
+        this.isCountriesVisible = true;
+    }
+
+    onAdd(map) {
+        this.map = map;
+        this.container = document.createElement("div");
+        this.container.className = "maplibregl-ctrl map-control-panel card";
+
+        const body = document.createElement("div");
+        body.className = "card-body";
+
+        const title = document.createElement("h6");
+        title.className = "card-title mb-2";
+        title.textContent = "Map controls";
+        body.appendChild(title);
+
+        body.appendChild(
+            this.createButton("globe", "Globe", () => {
+                const isGlobe = this.getIsGlobeEnabled();
+                setProjectionMode(this.map, !isGlobe);
+                this.render();
             }),
-            "top-right",
         );
+
+        body.appendChild(
+            this.createButton("terrain", "Terrain", () => {
+                const isTerrainEnabled = this.getIsTerrainEnabled();
+                setTerrainMode(this.map, !isTerrainEnabled);
+                this.render();
+            }),
+        );
+
+        body.appendChild(
+            this.createButton("countries", "Countries", () => {
+                this.isCountriesVisible = !this.isCountriesVisible;
+                setVisitedCountryVisibility(this.map, this.isCountriesVisible);
+                this.render();
+            }),
+        );
+
+        this.container.appendChild(body);
+        this.render();
+        return this.container;
     }
 
-    map.on("terrain", () => {
-        syncTerrainMode(map);
-    });
+    onRemove() {
+        this.container?.remove();
+        this.map = null;
+        this.container = null;
+        this.buttons = {};
+    }
+
+    createButton(key, label, onClick) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn btn-sm btn-outline-secondary map-control-button";
+        button.addEventListener("click", onClick);
+        this.buttons[key] = button;
+        this.setButtonContent(button, label, false);
+        return button;
+    }
+
+    render() {
+        if (!this.map) {
+            return;
+        }
+
+        this.setButtonContent(this.buttons.globe, "Globe", this.getIsGlobeEnabled());
+        this.setButtonContent(this.buttons.terrain, "Terrain", this.getIsTerrainEnabled());
+        this.setButtonContent(this.buttons.countries, "Countries", this.isCountriesVisible);
+    }
+
+    setButtonContent(button, label, isEnabled) {
+        if (!button) {
+            return;
+        }
+
+        button.classList.toggle("active", isEnabled);
+        button.setAttribute("aria-pressed", String(isEnabled));
+        button.textContent = `${label}: ${isEnabled ? "On" : "Off"}`;
+    }
+
+    getIsGlobeEnabled() {
+        const projection = typeof this.map?.getProjection === "function" ? this.map.getProjection() : null;
+        const projectionType =
+            typeof projection === "string" ? projection : projection?.type ?? projection?.name ?? "mercator";
+        return projectionType === "globe";
+    }
+
+    getIsTerrainEnabled() {
+        return typeof this.map?.getTerrain === "function" && Boolean(this.map.getTerrain());
+    }
+}
+
+function addSceneControls(map) {
+    map.addControl(new ScenePanelControl(), "top-right");
 }
 
 async function initializeMap() {
@@ -502,8 +620,8 @@ async function initializeMap() {
         applyGlobeBackdrop(map);
 
         ensureTerrainSupport(map);
-        addSceneControls(map);
         addVisitedCountryLayers(map, jsonData);
+        addSceneControls(map);
         addPlaceLayers(map, places);
         wirePlaceInteractions(map);
         updateStats(jsonData);
