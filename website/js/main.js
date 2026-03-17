@@ -1,5 +1,7 @@
-import { Place } from "./Place.js";
-import { createPopupContent } from "./popupContent.js";
+import { MapUi } from "./MapUi.js?v=20260317-1";
+import { PlaceCollection } from "./PlaceCollection.js?v=20260317-1";
+import { ScenePanelControl } from "./ScenePanelControl.js?v=20260317-1";
+import { createPopupContent } from "./popupContent.js?v=20260317-1";
 
 const DATA_URL = "./generated_data/points_places.json";
 const COUNTRY_DATA_URL = "./generated_data/countries.geojson";
@@ -18,56 +20,11 @@ const TERRAIN_TILEJSON_URL = "https://demotiles.maplibre.org/terrain-tiles/tiles
 const SATELLITE_TILE_URL = "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg";
 const SATELLITE_ATTRIBUTION =
     'Sentinel-2 cloudless - <a href="https://s2maps.eu" target="_blank" rel="noopener">s2maps.eu</a> by EOX IT Services GmbH';
-const COUNTRY_NAME_ALIASES = {
-    Serbia: "Republic of Serbia",
-    Tanzania: "United Republic of Tanzania",
-    USA: "United States of America",
-};
 const VISITED_COUNTRY_LAYER_IDS = [
     VISITED_COUNTRY_FILL_LAYER_ID,
     VISITED_COUNTRY_GLOW_LAYER_ID,
     VISITED_COUNTRY_LINE_LAYER_ID,
 ];
-
-function updateStats(jsonData) {
-    const elCountries = document.getElementById("stat-countries");
-    const elPlaces = document.getElementById("stat-places");
-
-    if (!elCountries || !elPlaces) {
-        return;
-    }
-
-    const countries = new Set();
-    if (Array.isArray(jsonData)) {
-        jsonData.forEach(place => {
-            if (place && typeof place.country === "string") {
-                countries.add(place.country);
-            }
-        });
-    }
-
-    elCountries.textContent = String(countries.size);
-    elPlaces.textContent = String(Array.isArray(jsonData) ? jsonData.length : 0);
-}
-
-function setStatus(message, isError = false) {
-    const statusEl = document.getElementById("map-status");
-
-    if (!statusEl) {
-        return;
-    }
-
-    if (!message) {
-        statusEl.hidden = true;
-        statusEl.textContent = "";
-        statusEl.classList.remove("is-error");
-        return;
-    }
-
-    statusEl.hidden = false;
-    statusEl.textContent = message;
-    statusEl.classList.toggle("is-error", isError);
-}
 
 function waitForMapStyle(map) {
     if (typeof map.isStyleLoaded === "function" && map.isStyleLoaded()) {
@@ -88,17 +45,6 @@ function waitForMapStyle(map) {
         map.once("style.load", handleLoad);
         map.once("error", handleError);
     });
-}
-
-async function loadPlaces() {
-    const response = await fetch(DATA_URL);
-
-    if (!response.ok) {
-        throw new Error(`Could not load place data (${response.status})`);
-    }
-
-    const jsonData = await response.json();
-    return Array.isArray(jsonData) ? jsonData : [];
 }
 
 function initializePopupCarousel(popup) {
@@ -173,85 +119,6 @@ function applyGlobeBackdrop(map) {
     });
 }
 
-function buildPlaces(jsonData) {
-    return jsonData.map(
-        placeData =>
-            new Place(
-                placeData.latitude,
-                placeData.longitude,
-                placeData.country,
-                placeData.city,
-                placeData.visitDates,
-                placeData.images,
-            ),
-    );
-}
-
-function getVisitedCountryNames(jsonData) {
-    const visitedCountries = new Set();
-
-    if (!Array.isArray(jsonData)) {
-        return [];
-    }
-
-    jsonData.forEach(place => {
-        if (!place || typeof place.country !== "string") {
-            return;
-        }
-
-        const countryName = place.country.trim();
-        if (!countryName) {
-            return;
-        }
-
-        visitedCountries.add(COUNTRY_NAME_ALIASES[countryName] ?? countryName);
-    });
-
-    return [...visitedCountries];
-}
-
-function fitMapToPlaces(map, places) {
-    const bounds = new maplibregl.LngLatBounds();
-    let hasValidBounds = false;
-
-    places.forEach(place => {
-        if (place.latitude == null || place.longitude == null) {
-            console.error(`Missing coordinates for ${place.city}, ${place.country}`);
-            return;
-        }
-
-        bounds.extend([place.longitude, place.latitude]);
-        hasValidBounds = true;
-    });
-
-    if (hasValidBounds) {
-        map.fitBounds(bounds, {
-            padding: 56,
-            duration: 1200,
-            maxZoom: 4.2,
-        });
-    }
-}
-
-function createPlaceFeatureCollection(places) {
-    return {
-        type: "FeatureCollection",
-        features: places
-            .filter(place => place.latitude != null && place.longitude != null)
-            .map((place, index) => ({
-                type: "Feature",
-                id: index,
-                geometry: {
-                    type: "Point",
-                    coordinates: [place.longitude, place.latitude],
-                },
-                properties: {
-                    popupHtml: createPopupContent(place),
-                },
-            })),
-    };
-}
-
 function getFirstNonFillBackgroundLayerId(map) {
     const layers = map.getStyle()?.layers ?? [];
     return layers.find(layer => layer.type !== "background" && layer.type !== "fill")?.id;
@@ -271,7 +138,7 @@ function setLayerVisibility(map, layerId, isVisible) {
 }
 
 function syncTerrainMode(map) {
-    const terrainEnabled = typeof map.getTerrain === "function" && Boolean(map.getTerrain());
+    const terrainEnabled = isTerrainEnabled(map);
     setLayerVisibility(map, SATELLITE_LAYER_ID, terrainEnabled);
     setLayerVisibility(map, HILLSHADE_LAYER_ID, terrainEnabled);
 }
@@ -282,8 +149,24 @@ function setVisitedCountryVisibility(map, isVisible) {
     });
 }
 
-function addVisitedCountryLayers(map, jsonData) {
-    const visitedCountryNames = getVisitedCountryNames(jsonData);
+function fitMapToPlaces(map, places) {
+    const coordinates = places.getCoordinates();
+    if (!coordinates.length) {
+        return;
+    }
+
+    const bounds = new maplibregl.LngLatBounds();
+    coordinates.forEach(coordinate => bounds.extend(coordinate));
+
+    map.fitBounds(bounds, {
+        padding: 56,
+        duration: 1200,
+        maxZoom: 4.2,
+    });
+}
+
+function addVisitedCountryLayers(map, places) {
+    const visitedCountryNames = places.getVisitedCountryNames();
     if (!visitedCountryNames.length) {
         return;
     }
@@ -374,7 +257,7 @@ function addPlaceLayers(map, places) {
     if (!map.getSource(PLACE_SOURCE_ID)) {
         map.addSource(PLACE_SOURCE_ID, {
             type: "geojson",
-            data: createPlaceFeatureCollection(places),
+            data: places.toFeatureCollection(createPopupContent),
         });
     }
 
@@ -404,7 +287,6 @@ function wirePlaceInteractions(map) {
 
     map.on("click", PLACE_LAYER_ID, event => {
         const feature = event.features?.[0];
-
         if (!feature || feature.geometry?.type !== "Point") {
             return;
         }
@@ -478,6 +360,16 @@ function ensureTerrainSupport(map) {
     syncTerrainMode(map);
 }
 
+function isGlobeEnabled(map) {
+    const projection = typeof map.getProjection === "function" ? map.getProjection() : null;
+    const projectionType = typeof projection === "string" ? projection : projection?.type ?? projection?.name ?? "mercator";
+    return projectionType === "globe";
+}
+
+function isTerrainEnabled(map) {
+    return typeof map.getTerrain === "function" && Boolean(map.getTerrain());
+}
+
 function setProjectionMode(map, useGlobe) {
     if (typeof map.setProjection !== "function") {
         return;
@@ -499,137 +391,62 @@ function setTerrainMode(map, isEnabled) {
               }
             : null,
     );
+
     syncTerrainMode(map);
 }
 
-class ScenePanelControl {
-    constructor() {
-        this.map = null;
-        this.container = null;
-        this.buttons = {};
-        this.isCountriesVisible = true;
-    }
-
-    onAdd(map) {
-        this.map = map;
-        this.container = document.createElement("div");
-        this.container.className = "maplibregl-ctrl map-control-panel card";
-
-        const body = document.createElement("div");
-        body.className = "card-body";
-
-        const title = document.createElement("h6");
-        title.className = "card-title mb-2";
-        title.textContent = "Map controls";
-        body.appendChild(title);
-
-        body.appendChild(
-            this.createButton("globe", "Globe", () => {
-                const isGlobe = this.getIsGlobeEnabled();
-                setProjectionMode(this.map, !isGlobe);
-                this.render();
-            }),
-        );
-
-        body.appendChild(
-            this.createButton("terrain", "Terrain", () => {
-                const isTerrainEnabled = this.getIsTerrainEnabled();
-                setTerrainMode(this.map, !isTerrainEnabled);
-                this.render();
-            }),
-        );
-
-        body.appendChild(
-            this.createButton("countries", "Countries", () => {
-                this.isCountriesVisible = !this.isCountriesVisible;
-                setVisitedCountryVisibility(this.map, this.isCountriesVisible);
-                this.render();
-            }),
-        );
-
-        this.container.appendChild(body);
-        this.render();
-        return this.container;
-    }
-
-    onRemove() {
-        this.container?.remove();
-        this.map = null;
-        this.container = null;
-        this.buttons = {};
-    }
-
-    createButton(key, label, onClick) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "btn btn-sm btn-outline-secondary map-control-button";
-        button.addEventListener("click", onClick);
-        this.buttons[key] = button;
-        this.setButtonContent(button, label, false);
-        return button;
-    }
-
-    render() {
-        if (!this.map) {
-            return;
-        }
-
-        this.setButtonContent(this.buttons.globe, "Globe", this.getIsGlobeEnabled());
-        this.setButtonContent(this.buttons.terrain, "Terrain", this.getIsTerrainEnabled());
-        this.setButtonContent(this.buttons.countries, "Countries", this.isCountriesVisible);
-    }
-
-    setButtonContent(button, label, isEnabled) {
-        if (!button) {
-            return;
-        }
-
-        button.classList.toggle("active", isEnabled);
-        button.setAttribute("aria-pressed", String(isEnabled));
-        button.textContent = `${label}: ${isEnabled ? "On" : "Off"}`;
-    }
-
-    getIsGlobeEnabled() {
-        const projection = typeof this.map?.getProjection === "function" ? this.map.getProjection() : null;
-        const projectionType =
-            typeof projection === "string" ? projection : projection?.type ?? projection?.name ?? "mercator";
-        return projectionType === "globe";
-    }
-
-    getIsTerrainEnabled() {
-        return typeof this.map?.getTerrain === "function" && Boolean(this.map.getTerrain());
-    }
-}
-
 function addSceneControls(map) {
-    map.addControl(new ScenePanelControl(), "top-right");
+    let visitedCountriesVisible = true;
+
+    map.addControl(
+        new ScenePanelControl([
+            {
+                key: "globe",
+                label: "Globe",
+                isEnabled: () => isGlobeEnabled(map),
+                onToggle: () => setProjectionMode(map, !isGlobeEnabled(map)),
+            },
+            {
+                key: "terrain",
+                label: "Terrain",
+                isEnabled: () => isTerrainEnabled(map),
+                onToggle: () => setTerrainMode(map, !isTerrainEnabled(map)),
+            },
+            {
+                key: "countries",
+                label: "Countries",
+                isEnabled: () => visitedCountriesVisible,
+                onToggle: () => {
+                    visitedCountriesVisible = !visitedCountriesVisible;
+                    setVisitedCountryVisibility(map, visitedCountriesVisible);
+                },
+            },
+        ]),
+        "top-right",
+    );
 }
 
 async function initializeMap() {
-    setStatus("Loading globe...");
+    const ui = new MapUi();
+    ui.setStatus("Loading globe...");
 
     try {
         const map = createMap();
-        const [jsonData] = await Promise.all([loadPlaces(), waitForMapStyle(map)]);
-        const places = buildPlaces(jsonData);
+        const [places] = await Promise.all([PlaceCollection.load(DATA_URL), waitForMapStyle(map)]);
 
-        if (typeof map.setProjection === "function") {
-            map.setProjection({ type: "globe" });
-        }
-
+        setProjectionMode(map, true);
         applyGlobeBackdrop(map);
-
         ensureTerrainSupport(map);
-        addVisitedCountryLayers(map, jsonData);
+        addVisitedCountryLayers(map, places);
         addSceneControls(map);
         addPlaceLayers(map, places);
         wirePlaceInteractions(map);
-        updateStats(jsonData);
+        ui.renderStats(places);
         fitMapToPlaces(map, places);
-        setStatus("");
+        ui.setStatus("");
     } catch (error) {
         console.error("Error loading map:", error);
-        setStatus("Could not load the map. Check the console for details.", true);
+        ui.setStatus("Could not load the map. Check the console for details.", true);
     }
 }
 

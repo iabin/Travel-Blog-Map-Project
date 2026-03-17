@@ -9,7 +9,7 @@ function createCarousel(images, uniqueCarouselId, placeName) {
 
     const carouselImages = images.slice(0, 5).map((url, index) => `
         <div class="carousel-item ${index === 0 ? "active" : ""}">
-            <img src="${url}" class="d-block w-100 card-img-top carousel-img" alt="${escapeHtml(placeName)} photo ${index + 1}">
+            <img src="${escapeHtml(url)}" class="d-block w-100 card-img-top carousel-img" alt="${escapeHtml(placeName)} photo ${index + 1}">
         </div>
         `).join("");
 
@@ -38,14 +38,14 @@ function createCarousel(images, uniqueCarouselId, placeName) {
 
 export function createPopupContent(place) {
     const uniqueCarouselId = `carousel-${Math.random().toString(36).slice(2, 12)}`;
-    const placeName = escapeHtml(place.name);
+    const placeName = escapeHtml(place.displayName);
     const visitDates = Array.isArray(place.visitDates) && place.visitDates.length > 0
         ? place.visitDates.map(date => `<p class="mb-1">${escapeHtml(date)}</p>`).join("")
         : `<p class="mb-0 text-muted">No visit dates recorded yet.</p>`;
 
     return `
     <div class="card place-popup-card">
-            ${createCarousel(place.images, uniqueCarouselId, place.name)}
+            ${createCarousel(place.images, uniqueCarouselId, place.displayName)}
             <h5 class="card-title card-header">${placeName}</h5>
             <div class="card-body">
             <div class="card-text">

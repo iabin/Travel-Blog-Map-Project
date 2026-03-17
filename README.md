@@ -3,7 +3,7 @@
 ## Project Overview
 
 
-The **Travel Blog Map Project** is an interactive map visualization tool that showcases various travel locations. Utilizing a JSON data file containing detailed location information, the project automatically generates latitude and longitude coordinates, as well as image paths for each destination. The map displays markers for every location, each equipped with popups that reveal visit dates and photo galleries, providing an engaging way to explore travel experiences.
+The **Travel Blog Map Project** is an interactive MapLibre globe that showcases various travel locations. A Python compiler turns your handwritten place list into map-ready JSON with coordinates and image paths. The website then renders visited places, visited countries, popups, and terrain controls on top of a Fiord basemap.
 
 ## Directory Structure
 
@@ -12,24 +12,27 @@ raw_data/
 └── points_places_template.json # Template JSON with basic location data
 website/
 ├── generated_data/
+│ ├── countries.geojson # Country polygons used for visited-country overlays
 │ └── points_places.json # Auto-generated JSON with coordinates and images
 ├── js/
-│ ├── main.js # Map initialization and data handling
-│ ├── Place.js # Place class definition
+│ ├── main.js # App bootstrap and MapLibre wiring
+│ ├── MapUi.js # Status and stats panel UI
+│ ├── Place.js # Place domain object
+│ ├── PlaceCollection.js # Collection helpers for places
+│ ├── ScenePanelControl.js # Text-based map controls
 │ └── popupContent.js # Popup content generation
 ├── css/
 │ └── styles.css # Custom styles
 ├── libs/
 │ ├── css/
-│ │ ├── bootstrap.min.css # Bootstrap CSS
-│ │ └── leaflet.css # Leaflet CSS
+│ │ └── bootstrap.min.css # Bootstrap CSS
 │ ├── js/
-│ │ ├── bootstrap.min.js # Bootstrap JS
-│ │ └── leaflet.js # Leaflet JS
+│ │ └── bootstrap.min.js # Bootstrap JS
 │ └── css/
 │ └── bootstrap.min.css.map # Source map for Bootstrap CSS
 ├── index.html # Main HTML file
-└── .cursorignore # Files and directories to ignore during indexing
+
+.cursorignore # Files and directories to ignore during indexing
 
 
 
@@ -42,18 +45,7 @@ This script performs the following actions:
 
 ### Launch the Website
 
-After generating the JSON data, you can view the interactive map by opening the `index.html` file in your web browser.
-
-#### Option 1: Open Directly
-
-Navigate to the `website` directory and open `index.html` with your preferred web browser.
-
-
-#### Option 2: Serve with a Local Web Server
-
-For a better experience, especially when dealing with JavaScript modules, it's recommended to serve the website using a local web server.
-
-**Using Python's SimpleHTTPServer:**
+After generating the JSON data, serve the `website` directory with a local web server. This project uses JavaScript modules and fetches JSON files, so serving it is the most reliable local setup.
 
 
 **Fields:**
@@ -125,7 +117,7 @@ For a better experience, especially when dealing with JavaScript modules, it's r
    - Run the `compiler.py` script to process the template and generate the updated `points_places.json` with coordinates and image paths.
 
 3. **View the Map:**
-   - Open the `index.html` file in a web browser or serve it via a local web server to see the updated map with the new location marker.
+   - Serve the `website` directory and open the site in a browser to see the updated globe with the new location marker.
 
 ## Contributing
 
