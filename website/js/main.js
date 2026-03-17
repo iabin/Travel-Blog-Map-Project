@@ -2,17 +2,27 @@ import { Place } from "./Place.js";
 import { createPopupContent } from "./popupContent.js";
 
 const DATA_URL = "./generated_data/points_places.json";
+const COUNTRY_DATA_URL = "./generated_data/countries.geojson";
 const MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/fiord";
 const TERRAIN_SOURCE_ID = "travel-terrain";
 const SATELLITE_SOURCE_ID = "travel-satellite";
+const COUNTRY_SOURCE_ID = "travel-countries";
 const PLACE_SOURCE_ID = "travel-places";
 const SATELLITE_LAYER_ID = "travel-satellite-layer";
 const HILLSHADE_LAYER_ID = "travel-hillshade-layer";
+const VISITED_COUNTRY_FILL_LAYER_ID = "travel-visited-country-fill";
+const VISITED_COUNTRY_GLOW_LAYER_ID = "travel-visited-country-glow";
+const VISITED_COUNTRY_LINE_LAYER_ID = "travel-visited-country-line";
 const PLACE_LAYER_ID = "travel-places-layer";
 const TERRAIN_TILEJSON_URL = "https://demotiles.maplibre.org/terrain-tiles/tiles.json";
 const SATELLITE_TILE_URL = "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg";
 const SATELLITE_ATTRIBUTION =
     'Sentinel-2 cloudless - <a href="https://s2maps.eu" target="_blank" rel="noopener">s2maps.eu</a> by EOX IT Services GmbH';
+const COUNTRY_NAME_ALIASES = {
+    Serbia: "Republic of Serbia",
+    Tanzania: "United Republic of Tanzania",
+    USA: "United States of America",
+};
 
 function updateStats(jsonData) {
     const elCountries = document.getElementById("stat-countries");
@@ -172,6 +182,29 @@ function buildPlaces(jsonData) {
     );
 }
 
+function getVisitedCountryNames(jsonData) {
+    const visitedCountries = new Set();
+
+    if (!Array.isArray(jsonData)) {
+        return [];
+    }
+
+    jsonData.forEach(place => {
+        if (!place || typeof place.country !== "string") {
+            return;
+        }
+
+        const countryName = place.country.trim();
+        if (!countryName) {
+            return;
+        }
+
+        visitedCountries.add(COUNTRY_NAME_ALIASES[countryName] ?? countryName);
+    });
+
+    return [...visitedCountries];
+}
+
 function fitMapToPlaces(map, places) {
     const bounds = new maplibregl.LngLatBounds();
     let hasValidBounds = false;
@@ -236,6 +269,94 @@ function syncTerrainMode(map) {
     const terrainEnabled = typeof map.getTerrain === "function" && Boolean(map.getTerrain());
     setLayerVisibility(map, SATELLITE_LAYER_ID, terrainEnabled);
     setLayerVisibility(map, HILLSHADE_LAYER_ID, terrainEnabled);
+}
+
+function addVisitedCountryLayers(map, jsonData) {
+    const visitedCountryNames = getVisitedCountryNames(jsonData);
+    if (!visitedCountryNames.length) {
+        return;
+    }
+
+    if (!map.getSource(COUNTRY_SOURCE_ID)) {
+        map.addSource(COUNTRY_SOURCE_ID, {
+            type: "geojson",
+            data: COUNTRY_DATA_URL,
+        });
+    }
+
+    const beforeLayerId = getFirstSymbolLayerId(map);
+    const visitedCountryFilter = ["match", ["get", "name"], visitedCountryNames, true, false];
+
+    if (!map.getLayer(VISITED_COUNTRY_FILL_LAYER_ID)) {
+        map.addLayer(
+            {
+                id: VISITED_COUNTRY_FILL_LAYER_ID,
+                type: "fill",
+                source: COUNTRY_SOURCE_ID,
+                filter: visitedCountryFilter,
+                paint: {
+                    "fill-color": "#ff8e66",
+                    "fill-opacity": 0.28,
+                },
+            },
+            beforeLayerId,
+        );
+    }
+
+    if (!map.getLayer(VISITED_COUNTRY_GLOW_LAYER_ID)) {
+        map.addLayer(
+            {
+                id: VISITED_COUNTRY_GLOW_LAYER_ID,
+                type: "line",
+                source: COUNTRY_SOURCE_ID,
+                filter: visitedCountryFilter,
+                paint: {
+                    "line-color": "#ff9b77",
+                    "line-opacity": 0.7,
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        0,
+                        1.2,
+                        3,
+                        2.4,
+                        6,
+                        4.2,
+                    ],
+                    "line-blur": 1.4,
+                },
+            },
+            beforeLayerId,
+        );
+    }
+
+    if (!map.getLayer(VISITED_COUNTRY_LINE_LAYER_ID)) {
+        map.addLayer(
+            {
+                id: VISITED_COUNTRY_LINE_LAYER_ID,
+                type: "line",
+                source: COUNTRY_SOURCE_ID,
+                filter: visitedCountryFilter,
+                paint: {
+                    "line-color": "#ffe6d8",
+                    "line-opacity": 0.95,
+                    "line-width": [
+                        "interpolate",
+                        ["linear"],
+                        ["zoom"],
+                        0,
+                        0.6,
+                        3,
+                        1.1,
+                        6,
+                        1.8,
+                    ],
+                },
+            },
+            beforeLayerId,
+        );
+    }
 }
 
 function addPlaceLayers(map, places) {
@@ -382,6 +503,7 @@ async function initializeMap() {
 
         ensureTerrainSupport(map);
         addSceneControls(map);
+        addVisitedCountryLayers(map, jsonData);
         addPlaceLayers(map, places);
         wirePlaceInteractions(map);
         updateStats(jsonData);
